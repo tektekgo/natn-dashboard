@@ -1,6 +1,8 @@
+import { Link } from 'react-router-dom'
+
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex flex-col">
       {/* Navigation */}
       <nav className="px-6 py-4 border-b border-gray-100">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -30,14 +32,14 @@ const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <main className="px-6 py-12 md:py-20">
+      <main className="px-6 py-12 md:py-20 flex-grow">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Large Logo in Hero */}
+          {/* Large Logo in Hero - Increased size */}
           <div className="flex justify-center mb-8">
             <img
               src="/natnlab-logo-svg.svg"
               alt="NATN Lab"
-              className="h-32 md:h-40 w-auto"
+              className="h-40 md:h-52 w-auto"
             />
           </div>
 
@@ -132,19 +134,67 @@ const LandingPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="px-6 py-8 border-t border-gray-200 mt-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <img
-              src="/natnlab-logo+name-svg.svg"
-              alt="NATN Lab"
-              className="h-8"
-            />
-            <div className="text-center md:text-right text-gray-500 text-sm">
-              <p>NATN Lab - Educational Trading Platform</p>
-              <p className="mt-1">
-                Paper trading only. This is not financial advice.
+      <footer className="border-t border-gray-200 mt-auto">
+        {/* Upper Footer */}
+        <div className="px-6 py-8 bg-gray-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <img
+                src="/natnlab-logo+name-svg.svg"
+                alt="NATN Lab"
+                className="h-12"
+              />
+              <div className="text-center md:text-right text-gray-600">
+                <p className="font-medium">NATN Lab - Educational Trading Platform</p>
+                <p className="text-sm mt-1 text-gray-500">
+                  Paper trading only. This is not financial advice.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Lower Footer - Copyright and Links */}
+        <div className="px-6 py-4 bg-white border-t border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+              {/* Copyright */}
+              <p>
+                Copyright © 2026{' '}
+                <a
+                  href="https://ai-focus.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary-600 transition-colors"
+                >
+                  ai-focus.org
+                </a>
+                {' '} · Sujit Gangadharan · All rights reserved.
               </p>
+
+              {/* Legal Links */}
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/terms"
+                  className="hover:text-primary-600 transition-colors"
+                >
+                  Terms of Use
+                </Link>
+                <span className="text-gray-300">|</span>
+                <Link
+                  to="/privacy"
+                  className="hover:text-primary-600 transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+                <span className="text-gray-300">|</span>
+                <Link
+                  to="/guidelines"
+                  className="hover:text-primary-600 transition-colors"
+                >
+                  Agreements and Guidelines
+                </Link>
+              </div>
             </div>
           </div>
         </div>
