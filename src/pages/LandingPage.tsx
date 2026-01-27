@@ -134,30 +134,18 @@ const LandingPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 mt-auto">
-        {/* Upper Footer */}
-        <div className="px-6 py-8 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <img
-                src="/natnlab-logo+name-svg.svg"
-                alt="NATN Lab"
-                className="h-12"
-              />
-              <div className="text-center md:text-right text-gray-600">
-                <p className="font-medium">NATN Lab - Educational Trading Platform</p>
-                <p className="text-sm mt-1 text-gray-500">
-                  Paper trading only. This is not financial advice.
-                </p>
-              </div>
-            </div>
+      <footer className="border-t border-gray-200 mt-auto bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Disclaimer */}
+          <div className="py-4 border-b border-gray-200">
+            <p className="text-sm text-gray-500 text-center">
+              Educational trading platform · Paper trading only · This is not financial advice
+            </p>
           </div>
-        </div>
 
-        {/* Lower Footer - Copyright and Links */}
-        <div className="px-6 py-4 bg-white border-t border-gray-100">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+          {/* Copyright and Links Row */}
+          <div className="py-4">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-gray-500">
               {/* Copyright */}
               <p>
                 Copyright © 2026{' '}
@@ -165,15 +153,15 @@ const LandingPage = () => {
                   href="https://ai-focus.org"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-primary-600 transition-colors"
+                  className="text-primary-600 hover:text-primary-700 transition-colors"
                 >
                   ai-focus.org
                 </a>
-                {' '} · Sujit Gangadharan · All rights reserved.
+                {' '}· Sujit Gangadharan · All rights reserved.
               </p>
 
               {/* Legal Links */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-center">
                 <Link
                   to="/terms"
                   className="hover:text-primary-600 transition-colors"
