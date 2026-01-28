@@ -15,18 +15,12 @@ const LandingPage = () => {
             />
           </div>
           <div className="flex items-center gap-4">
-            <button
-              className="btn-secondary"
-              onClick={() => alert('Sign In - Coming Soon!\n\nThis will connect to Supabase Auth.')}
-            >
+            <Link to="/login" className="btn-secondary">
               Sign In
-            </button>
-            <button
-              className="btn-primary"
-              onClick={() => alert('Get Started - Coming Soon!\n\nThis will open the registration flow.')}
-            >
+            </Link>
+            <Link to="/signup" className="btn-primary">
               Get Started
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -61,18 +55,12 @@ const LandingPage = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-            <button
-              className="btn-primary text-lg px-8 py-3"
-              onClick={() => alert('Start Learning - Coming Soon!\n\nThis will take you to the dashboard.')}
-            >
+            <Link to="/signup" className="btn-primary text-lg px-8 py-3">
               Start Learning
-            </button>
-            <button
-              className="btn-secondary text-lg px-8 py-3"
-              onClick={() => alert('View Demo - Coming Soon!\n\nThis will show a demo of the platform.')}
-            >
-              View Demo
-            </button>
+            </Link>
+            <Link to="/login" className="btn-secondary text-lg px-8 py-3">
+              Sign In
+            </Link>
           </div>
 
           {/* Feature Cards */}
@@ -123,13 +111,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          {/* Status Banner */}
-          <div className="mt-16 p-4 bg-primary-50 rounded-lg border border-primary-200">
-            <p className="text-primary-800 text-sm">
-              <span className="font-semibold">Development Status:</span> This is a scaffold page.
-              Authentication and dashboard features are coming soon.
-            </p>
-          </div>
         </div>
       </main>
 
