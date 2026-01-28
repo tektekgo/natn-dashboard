@@ -27,6 +27,15 @@ export interface FundamentalData {
   reportDate: string  // YYYY-MM-DD: when this data was reported/available
 }
 
+export interface SentimentData {
+  symbol: string
+  score: number        // 0-100 normalized (50 = neutral)
+  rawScore: number     // -1 to +1 (Alpha Vantage native range)
+  label: 'bullish' | 'bearish' | 'neutral'
+  articleCount: number
+  fetchedAt: string    // ISO timestamp
+}
+
 // -----------------------------------------------------------------------------
 // Signal Results
 // -----------------------------------------------------------------------------
@@ -51,6 +60,14 @@ export interface FundamentalSignalResult {
   eps: number | null
   epsGrowth: number | null
   beta: number | null
+  reasons: string[]
+}
+
+export interface SentimentSignalResult {
+  action: SignalAction
+  score: number       // 0-100
+  sentimentLabel: 'bullish' | 'bearish' | 'neutral'
+  articleCount: number
   reasons: string[]
 }
 

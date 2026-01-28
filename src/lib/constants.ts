@@ -8,6 +8,7 @@
 
 export const ALPACA_DATA_BASE_URL = 'https://data.alpaca.markets/v2'
 export const FMP_BASE_URL = 'https://financialmodelingprep.com/api/v3'
+export const ALPHAVANTAGE_BASE_URL = 'https://www.alphavantage.co/query'
 
 // -----------------------------------------------------------------------------
 // Default Configuration Values

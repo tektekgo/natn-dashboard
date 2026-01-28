@@ -9,6 +9,7 @@
 import type {
   TechnicalSignalResult,
   FundamentalSignalResult,
+  SentimentSignalResult,
   CombinedSignal,
   SignalAction,
 } from '../types'
@@ -17,6 +18,7 @@ import type { SignalWeights } from '../../types/strategy-config'
 export interface CombineSignalInputs {
   technical: TechnicalSignalResult
   fundamental: FundamentalSignalResult
+  sentiment?: SentimentSignalResult
   weights: SignalWeights
   /** Whether sentiment is available (false for backtesting) */
   sentimentAvailable?: boolean
@@ -27,17 +29,19 @@ export interface CombineSignalInputs {
  * Uses weighted scoring + majority vote + veto logic.
  */
 export function combineSignals(inputs: CombineSignalInputs): CombinedSignal {
-  const { technical, fundamental, weights, sentimentAvailable = false } = inputs
+  const { technical, fundamental, sentiment, weights, sentimentAvailable = false } = inputs
 
   // Normalize weights when sentiment unavailable
   let techWeight: number
   let fundWeight: number
+  let sentWeight = 0
 
-  if (sentimentAvailable) {
-    // All three weights active (would include sentiment)
+  if (sentimentAvailable && sentiment) {
+    // All three weights active
     const total = weights.technical + weights.fundamental + weights.sentiment
     techWeight = (weights.technical / total) * 100
     fundWeight = (weights.fundamental / total) * 100
+    sentWeight = (weights.sentiment / total) * 100
   } else {
     // Only technical + fundamental
     const total = weights.technical + weights.fundamental
@@ -46,9 +50,13 @@ export function combineSignals(inputs: CombineSignalInputs): CombinedSignal {
   }
 
   // Weighted score
-  const totalScore =
+  let totalScore =
     (technical.score * techWeight / 100) +
     (fundamental.score * fundWeight / 100)
+
+  if (sentimentAvailable && sentiment) {
+    totalScore += (sentiment.score * sentWeight / 100)
+  }
 
   // Majority vote: count buy vs sell signals
   let buyVotes = 0
@@ -58,6 +66,10 @@ export function combineSignals(inputs: CombineSignalInputs): CombinedSignal {
   if (technical.action === 'sell') sellVotes++
   if (fundamental.action === 'buy') buyVotes++
   if (fundamental.action === 'sell') sellVotes++
+  if (sentimentAvailable && sentiment) {
+    if (sentiment.action === 'buy') buyVotes++
+    if (sentiment.action === 'sell') sellVotes++
+  }
 
   // Determine action from weighted score
   let action: SignalAction = 'hold'
@@ -84,10 +96,21 @@ export function combineSignals(inputs: CombineSignalInputs): CombinedSignal {
     action = 'hold'
   }
 
+  // Don't buy if sentiment is strongly bearish
+  if (action === 'buy' && sentimentAvailable && sentiment && sentiment.sentimentLabel === 'bearish') {
+    vetoed = true
+    vetoReason = 'Bearish sentiment - veto buy'
+    action = 'hold'
+  }
+
   const reasons = [
     ...technical.reasons.map(r => `[Tech] ${r}`),
     ...fundamental.reasons.map(r => `[Fund] ${r}`),
   ]
+
+  if (sentimentAvailable && sentiment) {
+    reasons.push(...sentiment.reasons.map(r => `[Sent] ${r}`))
+  }
 
   if (vetoed && vetoReason) {
     reasons.push(`[Veto] ${vetoReason}`)
