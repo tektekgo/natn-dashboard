@@ -7,6 +7,7 @@ import type { IHistoricalDataProvider } from '../types'
 import type { OHLCV } from '../../engine/types'
 import type { AlpacaBar, AlpacaMultiBarsResponse } from '../../types/api'
 import { ALPACA_DATA_BASE_URL, ALPACA_MAX_BARS_PER_REQUEST } from '../../lib/constants'
+import { fetchWithRetry } from '../../lib/fetch-with-retry'
 
 export class AlpacaClient implements IHistoricalDataProvider {
   private apiKey: string
@@ -42,7 +43,7 @@ export class AlpacaClient implements IHistoricalDataProvider {
       }
 
       const url = `${ALPACA_DATA_BASE_URL}/stocks/${symbol}/bars?${params.toString()}`
-      const response = await fetch(url, {
+      const response = await fetchWithRetry(url, {
         headers: {
           'APCA-API-KEY-ID': this.apiKey,
           'APCA-API-SECRET-KEY': this.apiSecret,
@@ -100,7 +101,7 @@ export class AlpacaClient implements IHistoricalDataProvider {
       }
 
       const url = `${ALPACA_DATA_BASE_URL}/stocks/bars?${params.toString()}`
-      const response = await fetch(url, {
+      const response = await fetchWithRetry(url, {
         headers: {
           'APCA-API-KEY-ID': this.apiKey,
           'APCA-API-SECRET-KEY': this.apiSecret,
