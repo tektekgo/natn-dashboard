@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react'
+import InfoPanel from '@/components/common/InfoPanel'
 
 interface SymbolSelectorProps {
   symbols: string[]
@@ -39,7 +40,15 @@ export default function SymbolSelector({ symbols, onChange }: SymbolSelectorProp
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      <InfoPanel variant="learn" title="What are Stock Symbols?">
+        <p>
+          A <strong>ticker symbol</strong> (e.g., AAPL for Apple, MSFT for Microsoft) is a unique abbreviation
+          used to identify a publicly traded company on a stock exchange. Select the stocks your strategy will
+          analyze and trade. You can pick from the popular list below or type any valid ticker.
+        </p>
+      </InfoPanel>
+
       {/* Selected symbols */}
       <div className="flex flex-wrap gap-2">
         {symbols.map(s => (
@@ -70,7 +79,7 @@ export default function SymbolSelector({ symbols, onChange }: SymbolSelectorProp
           onChange={e => setInput(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
           placeholder="Enter symbol (e.g. AAPL)"
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+          className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none hover:border-gray-300 transition-colors placeholder:text-gray-400"
         />
         <button
           type="button"
@@ -84,7 +93,7 @@ export default function SymbolSelector({ symbols, onChange }: SymbolSelectorProp
 
       {/* Popular symbols */}
       <div>
-        <p className="text-xs text-gray-500 mb-2">Popular:</p>
+        <p className="text-xs text-gray-500 mb-2">Popular stocks:</p>
         <div className="flex flex-wrap gap-1">
           {POPULAR_SYMBOLS.filter(s => !symbols.includes(s)).slice(0, 12).map(s => (
             <button

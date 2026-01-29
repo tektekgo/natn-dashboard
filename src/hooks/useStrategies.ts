@@ -14,6 +14,10 @@ interface StrategyRow {
   description: string | null
   config: FullStrategyConfig
   is_active: boolean
+  trading_mode: 'none' | 'paper' | 'live'
+  activated_at: string | null
+  last_execution_at: string | null
+  execution_status: string | null
   created_at: string
   updated_at: string
 }

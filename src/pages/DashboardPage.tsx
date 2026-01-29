@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import Card from '@/components/common/Card'
+import InfoPanel from '@/components/common/InfoPanel'
 
 interface DashboardStats {
   strategyCount: number
@@ -21,7 +22,7 @@ interface DashboardStats {
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [stats, setStats] = useState<DashboardStats>({
     strategyCount: 0,
     backtestCount: 0,
@@ -70,44 +71,76 @@ export default function DashboardPage() {
     )
   }
 
+  const firstName = profile?.display_name?.split(' ')[0] || 'there'
+
   return (
     <div className="space-y-6">
+      {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome to your trading strategy laboratory.</p>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Welcome back, {firstName}
+        </h1>
+        <p className="text-gray-600 mt-1">Your trading strategy laboratory at a glance.</p>
       </div>
+
+      {/* Getting started guide */}
+      <InfoPanel variant="info" title="How NATN Lab Works">
+        <p className="mb-2">
+          NATN Lab is your educational trading laboratory. Here's the learning workflow:
+        </p>
+        <ol className="list-decimal list-inside space-y-1 text-sm">
+          <li><strong>Create a Strategy</strong> — choose stocks, set technical &amp; fundamental rules, and configure risk limits.</li>
+          <li><strong>Backtest It</strong> — run your strategy against historical market data to see how it would have performed.</li>
+          <li><strong>Compare &amp; Learn</strong> — compare different strategies side-by-side to understand what works and why.</li>
+          <li><strong>Iterate</strong> — adjust your parameters, re-test, and build intuition for how markets work.</li>
+        </ol>
+        <p className="mt-2 text-xs opacity-75">
+          All trading is simulated (paper trading). No real money is at risk. Trades execute on the Alpaca paper trading platform.
+        </p>
+      </InfoPanel>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <div className="text-center">
             <p className="text-3xl font-bold text-primary-600">{stats.strategyCount}</p>
-            <p className="text-sm text-gray-500 mt-1">Strategies</p>
+            <p className="text-sm text-gray-500 mt-1">Strategies Created</p>
+            <p className="text-xs text-gray-400 mt-2">
+              A strategy defines your rules for when to buy and sell stocks.
+            </p>
           </div>
         </Card>
         <Card>
           <div className="text-center">
             <p className="text-3xl font-bold text-primary-600">{stats.backtestCount}</p>
             <p className="text-sm text-gray-500 mt-1">Backtests Run</p>
+            <p className="text-xs text-gray-400 mt-2">
+              Each backtest simulates your strategy on past market data.
+            </p>
           </div>
         </Card>
         <Card>
-          <div className="text-center">
+          <div className="text-center py-2">
             <Link
               to="/strategies/new"
               className="inline-block btn-primary"
             >
               Create New Strategy
             </Link>
-            <p className="text-sm text-gray-500 mt-2">Get started</p>
+            <p className="text-xs text-gray-400 mt-3">
+              Start building your next trading strategy.
+            </p>
           </div>
         </Card>
       </div>
 
       {/* Recent backtests */}
-      <Card title="Recent Backtests">
+      <Card title="Recent Backtests" subtitle="Your most recent strategy test results.">
         {stats.recentBacktests.length === 0 ? (
-          <p className="text-gray-500 text-sm">No backtests yet. Create a strategy and run your first backtest!</p>
+          <div className="text-center py-6">
+            <p className="text-gray-500 text-sm mb-2">No backtests yet.</p>
+            <p className="text-gray-400 text-xs">Create a strategy and run your first backtest to see results here.</p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

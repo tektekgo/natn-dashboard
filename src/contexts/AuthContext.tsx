@@ -13,6 +13,7 @@ export interface AuthContextValue {
   profile: Tables<'user_profiles'> | null
   session: Session | null
   loading: boolean
+  isOwner: boolean
   signIn: (email: string, password: string) => Promise<{ error?: string }>
   signInWithMagicLink: (email: string) => Promise<{ error?: string }>
   signUp: (email: string, password: string, inviteCode?: string) => Promise<{ error?: string }>
@@ -149,6 +150,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         profile,
         session,
         loading,
+        isOwner: profile?.role === 'owner',
         signIn: handleSignIn,
         signInWithMagicLink: handleSignInWithMagicLink,
         signUp: handleSignUp,

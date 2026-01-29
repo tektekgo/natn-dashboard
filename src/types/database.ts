@@ -84,6 +84,10 @@ export type Database = {
           description: string | null
           config: Json
           is_active: boolean
+          trading_mode: 'none' | 'paper' | 'live'
+          activated_at: string | null
+          last_execution_at: string | null
+          execution_status: string | null
           created_at: string
           updated_at: string
         }
@@ -94,6 +98,8 @@ export type Database = {
           description?: string | null
           config: Json
           is_active?: boolean
+          trading_mode?: 'none' | 'paper' | 'live'
+          activated_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -104,6 +110,10 @@ export type Database = {
           description?: string | null
           config?: Json
           is_active?: boolean
+          trading_mode?: 'none' | 'paper' | 'live'
+          activated_at?: string | null
+          last_execution_at?: string | null
+          execution_status?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -282,6 +292,7 @@ export type Database = {
     Enums: {
       user_role: 'owner' | 'admin' | 'user'
       subscription_tier: 'free' | 'basic' | 'pro' | 'premium'
+      trading_mode: 'none' | 'paper' | 'live'
     }
     CompositeTypes: {
       [_ in never]: never

@@ -4,6 +4,7 @@
  */
 
 import Slider from '@/components/common/Slider'
+import InfoPanel from '@/components/common/InfoPanel'
 import type { SignalWeights } from '@/types/strategy-config'
 
 interface SignalWeightSlidersProps {
@@ -29,6 +30,19 @@ export default function SignalWeightSliders({
 
   return (
     <div className="space-y-4">
+      <InfoPanel variant="learn" title="How Signal Weighting Works">
+        <p>
+          Your strategy combines multiple signals (technical, fundamental, and optionally sentiment) into
+          a single <strong>combined score</strong> that drives buy/sell decisions. Weights determine how much
+          influence each signal type has. For example, setting Technical to 70 and Fundamental to 30 means
+          price-based signals have more than double the influence of financial health signals.
+        </p>
+        <p className="mt-2">
+          Weights are automatically <strong>normalized</strong> to total 100% — so the raw slider values
+          represent relative proportions, not absolute percentages.
+        </p>
+      </InfoPanel>
+
       <Slider
         label="Technical Weight"
         value={weights.technical}

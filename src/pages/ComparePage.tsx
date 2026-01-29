@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import Card from '@/components/common/Card'
+import InfoPanel from '@/components/common/InfoPanel'
 import ComparisonChart from '@/components/charts/ComparisonChart'
 import type { ComparisonResult, BacktestMetrics, PortfolioSnapshot, ClosedTrade, SignalAttribution } from '@/engine/types'
 import type { FullStrategyConfig } from '@/types/strategy-config'
@@ -94,8 +95,23 @@ export default function ComparePage() {
         </p>
       </div>
 
+      <InfoPanel variant="learn" title="Why Compare Strategies?">
+        <p>
+          Comparing strategies is one of the most powerful ways to learn about trading. By looking at the same
+          time period with different rules, you can see how each decision (indicator settings, risk limits,
+          stock selection) affects performance. Key metrics to compare:
+        </p>
+        <ul className="list-disc list-inside mt-2 space-y-1">
+          <li><strong>Total Return</strong> — overall profit/loss percentage.</li>
+          <li><strong>Sharpe Ratio</strong> — risk-adjusted return. Higher = better return per unit of risk. Above 1.0 is generally good.</li>
+          <li><strong>Max Drawdown</strong> — the largest peak-to-trough decline. Lower = less painful drops.</li>
+          <li><strong>Win Rate</strong> — percentage of trades that were profitable.</li>
+          <li><strong>Profit Factor</strong> — gross profits / gross losses. Above 1.0 means you made more than you lost.</li>
+        </ul>
+      </InfoPanel>
+
       {/* Selection */}
-      <Card title="Select Backtests">
+      <Card title="Select Backtests" subtitle="Check at least 2 backtests to compare their performance.">
         {backtests.length === 0 ? (
           <p className="text-gray-500 text-sm">No backtests available. Run a backtest first.</p>
         ) : (
@@ -132,11 +148,11 @@ export default function ComparePage() {
       {/* Comparison Chart */}
       {selectedResults.length >= 2 && (
         <>
-          <Card title="Equity Curve Comparison">
+          <Card title="Equity Curve Comparison" subtitle="How each strategy's portfolio value changed over time.">
             <ComparisonChart results={selectedResults} />
           </Card>
 
-          <Card title="Metrics Comparison">
+          <Card title="Metrics Comparison" subtitle="Side-by-side performance metrics for selected strategies.">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

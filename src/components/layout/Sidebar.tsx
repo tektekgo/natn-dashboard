@@ -1,8 +1,10 @@
 /**
  * Navigation sidebar for the dashboard.
+ * Dark professional design inspired by fintech platforms.
  */
 
 import { NavLink } from 'react-router-dom'
+import { APP_VERSION } from '@/lib/constants'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -17,27 +19,27 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed = false }: SidebarProps) {
   return (
-    <aside className={`bg-white border-r border-gray-200 flex flex-col ${collapsed ? 'w-16' : 'w-64'} transition-all duration-200`}>
+    <aside className={`bg-gray-900 flex flex-col ${collapsed ? 'w-16' : 'w-64'} transition-all duration-200`}>
       {/* Logo */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="px-5 py-5 border-b border-gray-800">
         <img
           src={collapsed ? '/natnlab-logo-svg.svg' : '/natnlab-logo+name-svg.svg'}
           alt="NATN Lab"
-          className={collapsed ? 'h-8 mx-auto' : 'h-8'}
+          className={collapsed ? 'h-8 mx-auto brightness-0 invert opacity-90' : 'h-8 brightness-0 invert opacity-90'}
         />
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-2 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map(item => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                 isActive
-                  ? 'bg-primary-50 text-primary-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-primary-600 text-white shadow-md shadow-primary-600/25'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
               }`
             }
           >
@@ -53,6 +55,13 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
           </NavLink>
         ))}
       </nav>
+
+      {/* Bottom branding */}
+      <div className="px-5 py-4 border-t border-gray-800">
+        <p className="text-[10px] uppercase tracking-widest text-gray-600 text-center">
+          NATN Lab v{APP_VERSION}
+        </p>
+      </div>
     </aside>
   )
 }
