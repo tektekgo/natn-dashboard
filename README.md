@@ -51,17 +51,21 @@ NATN Lab is an educational trading platform for learning and experimenting with 
    npm run dev
    ```
 
-5. Open http://localhost:5173
+5. Open http://localhost:8000
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_SUPABASE_URL` | Your Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous key (public) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server-side only) |
-| `RESEND_API_KEY` | Resend email API key |
-| `OPENROUTER_API_KEY` | OpenRouter AI API key |
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `VITE_SUPABASE_URL` | Supabase project URL | Yes |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous key (public) | Yes |
+| `VITE_APP_ENV` | `development` or `production` | Yes |
+| `VITE_ALPACA_API_KEY` | Alpaca API key (paper trading data) | Yes |
+| `VITE_ALPACA_API_SECRET` | Alpaca API secret (paper trading data) | Yes |
+| `VITE_FMP_API_KEY` | Financial Modeling Prep key (fundamentals) | Yes |
+| `VITE_APP_URL` | App URL (production only) | No |
+
+See `.env.example` for the full template. Note: `VITE_` keys are exposed in client-side JS. See `docs/SECURITY-NOTES.md` for the Edge Function migration plan.
 
 ## Project Structure
 
@@ -70,12 +74,18 @@ natn-dashboard/
 ├── public/              # Static assets (logos, favicons)
 ├── src/
 │   ├── components/      # Reusable UI components
-│   ├── pages/           # Route pages
-│   ├── lib/             # Utilities (Supabase client, etc.)
+│   ├── contexts/        # React contexts (Auth, etc.)
+│   ├── data/providers/  # API clients (Alpaca, FMP, Alpha Vantage)
+│   ├── engine/          # Backtesting engine (simulator, signals, indicators)
 │   ├── hooks/           # Custom React hooks
+│   ├── lib/             # Utilities (Supabase client, fetch-with-retry)
+│   ├── pages/           # Route pages
 │   └── types/           # TypeScript type definitions
 ├── supabase/
-│   └── migrations/      # Database migration files
+│   └── migrations/      # Database migration files (001-005)
+├── docs/
+│   ├── DEPLOYMENT.md    # Build/deploy/env guide
+│   └── SECURITY-NOTES.md # API key security + migration plan
 └── .env.example         # Environment variable template
 ```
 
