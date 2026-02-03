@@ -1,0 +1,7 @@
+export { runBacktest, runComparison } from './backtest-runner'
+export type { BacktestRunOptions } from './backtest-runner'
+export * from './types'
+export * from './indicators'
+export * from './signals'
+export * from './simulator'
+export * from './metrics'
