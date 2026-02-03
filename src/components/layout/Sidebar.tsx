@@ -1,6 +1,7 @@
 /**
  * Navigation sidebar for the dashboard.
  * Dark professional design inspired by fintech platforms.
+ * Uses CSS variables for theme-aware styling.
  */
 
 import { NavLink } from 'react-router-dom'
@@ -19,9 +20,9 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed = false }: SidebarProps) {
   return (
-    <aside className={`bg-gray-900 flex flex-col ${collapsed ? 'w-16' : 'w-64'} transition-all duration-200`}>
+    <aside className={`bg-sidebar flex flex-col ${collapsed ? 'w-16' : 'w-64'} transition-all duration-200`}>
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-800">
+      <div className="px-5 py-5 border-b border-sidebar-border">
         <img
           src={collapsed ? '/natnlab-logo-svg.svg' : '/natnlab-logo+name-svg.svg'}
           alt="NATN Lab"
@@ -38,8 +39,8 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                 isActive
-                  ? 'bg-primary-600 text-white shadow-md shadow-primary-600/25'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-200'
+                  ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md shadow-primary/25'
+                  : 'text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
               }`
             }
           >
@@ -57,8 +58,8 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
       </nav>
 
       {/* Bottom branding */}
-      <div className="px-5 py-4 border-t border-gray-800">
-        <p className="text-[10px] uppercase tracking-widest text-gray-600 text-center">
+      <div className="px-5 py-4 border-t border-sidebar-border">
+        <p className="text-[10px] uppercase tracking-widest text-sidebar-foreground/40 text-center">
           NATN Lab v{APP_VERSION}
         </p>
       </div>

@@ -5,6 +5,9 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 interface LoginFormProps {
   onSuccess?: () => void
@@ -49,17 +52,18 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     return (
       <div className="text-center">
         <div className="text-4xl mb-4">&#9993;</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Check your email</h3>
-        <p className="text-gray-600">
+        <h3 className="text-lg font-semibold text-foreground mb-2">Check your email</h3>
+        <p className="text-muted-foreground">
           We sent a magic link to <strong>{email}</strong>.
           Click the link in the email to sign in.
         </p>
-        <button
+        <Button
+          variant="link"
           onClick={() => setMagicLinkSent(false)}
-          className="mt-4 text-primary-600 hover:text-primary-700 text-sm font-medium"
+          className="mt-4"
         >
           Try a different method
-        </button>
+        </Button>
       </div>
     )
   }
@@ -67,60 +71,50 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
           {error}
         </div>
       )}
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Email
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
           id="email"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
           placeholder="you@example.com"
         />
       </div>
 
       {mode === 'password' && (
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
             id="password"
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
             minLength={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
             placeholder="Your password"
           />
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Signing in...' : mode === 'password' ? 'Sign In' : 'Send Magic Link'}
-      </button>
+      </Button>
 
       <div className="text-center">
-        <button
+        <Button
           type="button"
+          variant="link"
           onClick={() => setMode(mode === 'password' ? 'magic' : 'password')}
-          className="text-sm text-primary-600 hover:text-primary-700 font-medium"
         >
           {mode === 'password' ? 'Sign in with magic link instead' : 'Sign in with password instead'}
-        </button>
+        </Button>
       </div>
     </form>
   )

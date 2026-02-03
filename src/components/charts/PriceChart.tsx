@@ -1,10 +1,11 @@
 /**
  * Price chart using TradingView Lightweight Charts.
- * Shows candlestick data with optional trade markers.
+ * Shows candlestick data with optional trade markers and theme support.
  */
 
 import { useEffect, useRef } from 'react'
 import { createChart, type IChartApi, ColorType, CandlestickSeries, createSeriesMarkers } from 'lightweight-charts'
+import { useTheme } from '@/contexts/ThemeContext'
 import type { OHLCV, ClosedTrade } from '@/engine/types'
 
 interface PriceChartProps {
@@ -17,27 +18,30 @@ interface PriceChartProps {
 export default function PriceChart({ data, trades = [], height = 400, symbol }: PriceChartProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
+  const { resolvedTheme } = useTheme()
 
   useEffect(() => {
     if (!containerRef.current || data.length === 0) return
+
+    const isDark = resolvedTheme === 'dark'
 
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
       height,
       layout: {
-        background: { type: ColorType.Solid, color: 'white' },
-        textColor: '#374151',
+        background: { type: ColorType.Solid, color: isDark ? 'hsl(222.2, 84%, 4.9%)' : 'white' },
+        textColor: isDark ? 'hsl(215, 20.2%, 65.1%)' : '#374151',
         fontFamily: 'Inter, system-ui, sans-serif',
       },
       grid: {
-        vertLines: { color: '#f3f4f6' },
-        horzLines: { color: '#f3f4f6' },
+        vertLines: { color: isDark ? 'hsl(217, 32.6%, 17.5%)' : '#f3f4f6' },
+        horzLines: { color: isDark ? 'hsl(217, 32.6%, 17.5%)' : '#f3f4f6' },
       },
       rightPriceScale: {
-        borderColor: '#e5e7eb',
+        borderColor: isDark ? 'hsl(217, 32.6%, 17.5%)' : '#e5e7eb',
       },
       timeScale: {
-        borderColor: '#e5e7eb',
+        borderColor: isDark ? 'hsl(217, 32.6%, 17.5%)' : '#e5e7eb',
       },
     })
 
@@ -103,7 +107,7 @@ export default function PriceChart({ data, trades = [], height = 400, symbol }: 
       window.removeEventListener('resize', handleResize)
       chart.remove()
     }
-  }, [data, trades, height, symbol])
+  }, [data, trades, height, symbol, resolvedTheme])
 
   return <div ref={containerRef} className="w-full" />
 }

@@ -1,6 +1,6 @@
 /**
  * Equity curve chart using Recharts.
- * Shows portfolio value over time.
+ * Shows portfolio value over time with theme support.
  */
 
 import {
@@ -12,6 +12,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
+import { useTheme } from '@/contexts/ThemeContext'
 import type { PortfolioSnapshot } from '@/engine/types'
 
 interface EquityCurveChartProps {
@@ -20,8 +21,11 @@ interface EquityCurveChartProps {
 }
 
 export default function EquityCurveChart({ data, height = 300 }: EquityCurveChartProps) {
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+
   if (data.length === 0) {
-    return <div className="text-gray-400 text-center py-8">No data available</div>
+    return <div className="text-muted-foreground text-center py-8">No data available</div>
   }
 
   const chartData = data.map(s => ({
@@ -29,6 +33,11 @@ export default function EquityCurveChart({ data, height = 300 }: EquityCurveChar
     equity: Number(s.equity.toFixed(2)),
     cash: Number(s.cash.toFixed(2)),
   }))
+
+  const gridColor = isDark ? 'hsl(217 32.6% 17.5%)' : '#f3f4f6'
+  const tickColor = isDark ? 'hsl(215 20.2% 65.1%)' : '#9ca3af'
+  const tooltipBg = isDark ? 'hsl(222.2 84% 4.9%)' : 'white'
+  const tooltipBorder = isDark ? 'hsl(217 32.6% 17.5%)' : '#e5e7eb'
 
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -39,21 +48,25 @@ export default function EquityCurveChart({ data, height = 300 }: EquityCurveChar
             <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 11, fill: '#9ca3af' }}
+          tick={{ fontSize: 11, fill: tickColor }}
           tickFormatter={(d: string) => d.substring(5)}
           interval="preserveStartEnd"
         />
         <YAxis
-          tick={{ fontSize: 11, fill: '#9ca3af' }}
+          tick={{ fontSize: 11, fill: tickColor }}
           tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
         />
         <Tooltip
           formatter={((value: number) => [`$${value.toLocaleString()}`, 'Equity']) as any}
           labelFormatter={((label: string) => `Date: ${label}`) as any}
-          contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }}
+          contentStyle={{
+            borderRadius: '8px',
+            border: `1px solid ${tooltipBorder}`,
+            backgroundColor: tooltipBg,
+          }}
         />
         <Area
           type="monotone"

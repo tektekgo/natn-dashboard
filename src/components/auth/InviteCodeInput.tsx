@@ -5,6 +5,8 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface InviteCodeInputProps {
   onValidCode?: (code: string) => void
@@ -57,27 +59,27 @@ export default function InviteCodeInput({ onValidCode }: InviteCodeInputProps) {
   return (
     <div>
       <div className="flex gap-2">
-        <input
+        <Input
           type="text"
           value={code}
           onChange={e => {
             setCode(e.target.value)
             setStatus('idle')
           }}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+          className="flex-1"
           placeholder="Enter invite code"
         />
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={validateCode}
           disabled={status === 'checking' || !code.trim()}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
         >
           {status === 'checking' ? 'Checking...' : 'Verify'}
-        </button>
+        </Button>
       </div>
       {message && (
-        <p className={`mt-1 text-sm ${status === 'valid' ? 'text-green-600' : 'text-red-600'}`}>
+        <p className={`mt-1 text-sm ${status === 'valid' ? 'text-success' : 'text-destructive'}`}>
           {message}
         </p>
       )}

@@ -5,6 +5,9 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 interface SignupFormProps {
   onSuccess?: () => void
@@ -52,8 +55,8 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
     return (
       <div className="text-center">
         <div className="text-4xl mb-4">&#9989;</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Account created!</h3>
-        <p className="text-gray-600">
+        <h3 className="text-lg font-semibold text-foreground mb-2">Account created!</h3>
+        <p className="text-muted-foreground">
           Please check your email to confirm your account.
           You'll be able to sign in once confirmed.
         </p>
@@ -64,79 +67,65 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg text-sm">
           {error}
         </div>
       )}
 
-      <div>
-        <label htmlFor="signup-email" className="block text-sm font-medium text-gray-700 mb-1">
-          Email
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="signup-email">Email</Label>
+        <Input
           id="signup-email"
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
           placeholder="you@example.com"
         />
       </div>
 
-      <div>
-        <label htmlFor="signup-password" className="block text-sm font-medium text-gray-700 mb-1">
-          Password
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="signup-password">Password</Label>
+        <Input
           id="signup-password"
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
           placeholder="At least 6 characters"
         />
       </div>
 
-      <div>
-        <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
-          Confirm Password
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="confirm-password">Confirm Password</Label>
+        <Input
           id="confirm-password"
           type="password"
           value={confirmPassword}
           onChange={e => setConfirmPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
           placeholder="Confirm your password"
         />
       </div>
 
-      <div>
-        <label htmlFor="invite-code" className="block text-sm font-medium text-gray-700 mb-1">
-          Invite Code <span className="text-gray-400">(optional)</span>
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="invite-code">
+          Invite Code <span className="text-muted-foreground">(optional)</span>
+        </Label>
+        <Input
           id="invite-code"
           type="text"
           value={inviteCode}
           onChange={e => setInviteCode(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
           placeholder="Enter invite code"
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Creating account...' : 'Create Account'}
-      </button>
+      </Button>
     </form>
   )
 }

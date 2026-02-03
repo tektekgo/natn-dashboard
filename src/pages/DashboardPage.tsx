@@ -7,8 +7,11 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
-import Card from '@/components/common/Card'
-import InfoPanel from '@/components/common/InfoPanel'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { InfoPanel } from '@/components/ui/info-panel'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface DashboardStats {
   strategyCount: number
@@ -65,8 +68,17 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+        <Skeleton className="h-32 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+        </div>
       </div>
     )
   }
@@ -77,10 +89,10 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-foreground">
           Welcome back, {firstName}
         </h1>
-        <p className="text-gray-600 mt-1">Your trading strategy laboratory at a glance.</p>
+        <p className="text-muted-foreground mt-1">Your trading strategy laboratory at a glance.</p>
       </div>
 
       {/* Getting started guide */}
@@ -102,80 +114,89 @@ export default function DashboardPage() {
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-primary-600">{stats.strategyCount}</p>
-            <p className="text-sm text-gray-500 mt-1">Strategies Created</p>
-            <p className="text-xs text-gray-400 mt-2">
-              A strategy defines your rules for when to buy and sell stocks.
-            </p>
-          </div>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-primary">{stats.strategyCount}</p>
+              <p className="text-sm text-muted-foreground mt-1">Strategies Created</p>
+              <p className="text-xs text-muted-foreground/70 mt-2">
+                A strategy defines your rules for when to buy and sell stocks.
+              </p>
+            </div>
+          </CardContent>
         </Card>
         <Card>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-primary-600">{stats.backtestCount}</p>
-            <p className="text-sm text-gray-500 mt-1">Backtests Run</p>
-            <p className="text-xs text-gray-400 mt-2">
-              Each backtest simulates your strategy on past market data.
-            </p>
-          </div>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-3xl font-bold text-primary">{stats.backtestCount}</p>
+              <p className="text-sm text-muted-foreground mt-1">Backtests Run</p>
+              <p className="text-xs text-muted-foreground/70 mt-2">
+                Each backtest simulates your strategy on past market data.
+              </p>
+            </div>
+          </CardContent>
         </Card>
         <Card>
-          <div className="text-center py-2">
-            <Link
-              to="/strategies/new"
-              className="inline-block btn-primary"
-            >
-              Create New Strategy
-            </Link>
-            <p className="text-xs text-gray-400 mt-3">
-              Start building your next trading strategy.
-            </p>
-          </div>
+          <CardContent className="pt-6">
+            <div className="text-center py-2">
+              <Button asChild>
+                <Link to="/strategies/new">
+                  Create New Strategy
+                </Link>
+              </Button>
+              <p className="text-xs text-muted-foreground/70 mt-3">
+                Start building your next trading strategy.
+              </p>
+            </div>
+          </CardContent>
         </Card>
       </div>
 
       {/* Recent backtests */}
-      <Card title="Recent Backtests" subtitle="Your most recent strategy test results.">
-        {stats.recentBacktests.length === 0 ? (
-          <div className="text-center py-6">
-            <p className="text-gray-500 text-sm mb-2">No backtests yet.</p>
-            <p className="text-gray-400 text-xs">Create a strategy and run your first backtest to see results here.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 text-gray-500 font-medium">Strategy</th>
-                  <th className="text-right py-2 text-gray-500 font-medium">Return</th>
-                  <th className="text-right py-2 text-gray-500 font-medium">Date</th>
-                  <th className="text-right py-2 text-gray-500 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Backtests</CardTitle>
+          <CardDescription>Your most recent strategy test results.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {stats.recentBacktests.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-muted-foreground text-sm mb-2">No backtests yet.</p>
+              <p className="text-muted-foreground/70 text-xs">Create a strategy and run your first backtest to see results here.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Strategy</TableHead>
+                  <TableHead className="text-right">Return</TableHead>
+                  <TableHead className="text-right">Date</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {stats.recentBacktests.map(bt => (
-                  <tr key={bt.id} className="border-b border-gray-100">
-                    <td className="py-2 font-medium text-gray-900">{bt.strategy_name}</td>
-                    <td className={`py-2 text-right font-mono ${bt.total_return >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <TableRow key={bt.id}>
+                    <TableCell className="font-medium">{bt.strategy_name}</TableCell>
+                    <TableCell className={`text-right font-mono ${bt.total_return >= 0 ? 'text-success' : 'text-destructive'}`}>
                       {bt.total_return >= 0 ? '+' : ''}{bt.total_return.toFixed(2)}%
-                    </td>
-                    <td className="py-2 text-right text-gray-500">
+                    </TableCell>
+                    <TableCell className="text-right text-muted-foreground">
                       {new Date(bt.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-2 text-right">
+                    </TableCell>
+                    <TableCell className="text-right">
                       <Link
                         to={`/backtest/${bt.id}`}
-                        className="text-primary-600 hover:text-primary-700 font-medium"
+                        className="text-primary hover:text-primary/80 font-medium"
                       >
                         View
                       </Link>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
       </Card>
     </div>
   )

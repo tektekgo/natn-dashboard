@@ -8,9 +8,13 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
-import Card from '@/components/common/Card'
-import Button from '@/components/common/Button'
-import InfoPanel from '@/components/common/InfoPanel'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { InfoPanel } from '@/components/ui/info-panel'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import StrategyForm from '@/components/strategy/StrategyForm'
 import BacktestProgress from '@/components/backtest/BacktestProgress'
 import BacktestSummary from '@/components/backtest/BacktestSummary'
@@ -200,8 +204,12 @@ export default function StrategyDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+        <Skeleton className="h-96 w-full" />
       </div>
     )
   }
@@ -209,10 +217,10 @@ export default function StrategyDetailPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-foreground">
           {isNew ? 'Create Strategy' : `Edit: ${config.name}`}
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-muted-foreground mt-1">
           Configure your strategy parameters and run a backtest.
         </p>
       </div>
@@ -238,8 +246,11 @@ export default function StrategyDetailPage() {
 
       {/* Trading Activation (Owner Only) */}
       {strategyId && isOwner && (
-        <Card title="Trading Activation">
-          <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Trading Activation</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             {tradingMode === 'none' ? (
               <>
                 <InfoPanel variant="info" title="Activate for Paper Trading">
@@ -251,14 +262,14 @@ export default function StrategyDetailPage() {
                 </InfoPanel>
 
                 {!hasBacktests && !backtestResult && (
-                  <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-lg text-sm">
+                  <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-400 px-4 py-3 rounded-lg text-sm">
                     Run at least one backtest before activating this strategy for trading.
                   </div>
                 )}
 
                 {showActivateConfirm ? (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
-                    <p className="text-sm text-blue-800 font-medium">
+                  <div className="bg-primary-50 dark:bg-primary-950/30 border border-primary-200 dark:border-primary-900 rounded-lg p-4 space-y-3">
+                    <p className="text-sm text-primary-800 dark:text-primary-200 font-medium">
                       Confirm: This strategy will be executed by the NATN trading bot every 30 minutes
                       on your Alpaca paper trading account. Any currently active strategy will be deactivated.
                     </p>
@@ -283,42 +294,42 @@ export default function StrategyDetailPage() {
             ) : (
               <>
                 <div className="flex items-center gap-3">
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold ${
-                    tradingMode === 'paper'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-700'
-                  }`}>
+                  <Badge variant={tradingMode === 'paper' ? 'success' : 'destructive'} className="gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
                     {tradingMode === 'paper' ? 'Paper Trading Active' : 'Live Trading Active'}
-                  </span>
+                  </Badge>
                 </div>
 
                 {lastExecutionAt && (
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-muted-foreground">
                     Last executed: <span className="font-medium">{new Date(lastExecutionAt).toLocaleString()}</span>
                     {executionStatus && (
-                      <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        executionStatus === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }`}>
+                      <Badge
+                        variant={executionStatus === 'success' ? 'success' : 'destructive'}
+                        className="ml-2"
+                      >
                         {executionStatus}
-                      </span>
+                      </Badge>
                     )}
                   </div>
                 )}
 
-                <Button variant="danger" onClick={handleDeactivateTrading}>
+                <Button variant="destructive" onClick={handleDeactivateTrading}>
                   Deactivate Trading
                 </Button>
               </>
             )}
-          </div>
+          </CardContent>
         </Card>
       )}
 
       {/* Backtest Section */}
       {strategyId && (
-        <Card title="Run Backtest">
-          <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Run Backtest</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <InfoPanel variant="learn" title="What is Backtesting?">
               <p>
                 <strong>Backtesting</strong> simulates your strategy on historical market data to see how it
@@ -329,22 +340,22 @@ export default function StrategyDetailPage() {
               </p>
             </InfoPanel>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="startDate">Start Date</Label>
+                <Input
+                  id="startDate"
                   type="date"
                   value={startDate}
                   onChange={e => setStartDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="endDate">End Date</Label>
+                <Input
+                  id="endDate"
                   type="date"
                   value={endDate}
                   onChange={e => setEndDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
                 />
               </div>
             </div>
@@ -362,11 +373,11 @@ export default function StrategyDetailPage() {
             )}
 
             {backtestError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-destructive/10 border border-destructive/30 text-destructive px-4 py-3 rounded-lg text-sm">
                 {backtestError}
               </div>
             )}
-          </div>
+          </CardContent>
         </Card>
       )}
 
@@ -375,12 +386,22 @@ export default function StrategyDetailPage() {
         <>
           <BacktestSummary metrics={backtestResult.metrics} />
 
-          <Card title="Equity Curve">
-            <EquityCurveChart data={backtestResult.equityCurve} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Equity Curve</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EquityCurveChart data={backtestResult.equityCurve} />
+            </CardContent>
           </Card>
 
-          <Card title="Drawdown">
-            <DrawdownChart equityCurve={backtestResult.equityCurve} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Drawdown</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DrawdownChart equityCurve={backtestResult.equityCurve} />
+            </CardContent>
           </Card>
 
           <SignalAttribution attribution={backtestResult.attribution} />

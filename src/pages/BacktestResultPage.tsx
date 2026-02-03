@@ -7,7 +7,9 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
-import Card from '@/components/common/Card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import EquityCurveChart from '@/components/charts/EquityCurveChart'
 import DrawdownChart from '@/components/charts/DrawdownChart'
 import MetricsBarChart from '@/components/charts/MetricsBarChart'
@@ -55,8 +57,14 @@ export default function BacktestResultPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-96" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, i) => (
+            <Skeleton key={i} className="h-24" />
+          ))}
+        </div>
+        <Skeleton className="h-64" />
       </div>
     )
   }
@@ -64,8 +72,8 @@ export default function BacktestResultPage() {
   if (!data) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Backtest result not found.</p>
-        <Link to="/dashboard" className="text-primary-600 hover:text-primary-700 mt-2 inline-block">
+        <p className="text-muted-foreground">Backtest result not found.</p>
+        <Link to="/dashboard" className="text-primary hover:text-primary/80 mt-2 inline-block">
           Back to Dashboard
         </Link>
       </div>
@@ -78,14 +86,14 @@ export default function BacktestResultPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-foreground">
             {data.strategy_config.name} - Backtest Results
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-muted-foreground mt-1">
             {data.start_date} to {data.end_date}
           </p>
         </div>
-        <Link to="/strategies" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+        <Link to="/strategies" className="text-primary hover:text-primary/80 text-sm font-medium">
           Back to Strategies
         </Link>
       </div>
@@ -103,77 +111,100 @@ export default function BacktestResultPage() {
       </div>
 
       {/* Equity Curve */}
-      <Card title="Equity Curve">
-        <EquityCurveChart data={data.equity_curve} />
+      <Card>
+        <CardHeader>
+          <CardTitle>Equity Curve</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <EquityCurveChart data={data.equity_curve} />
+        </CardContent>
       </Card>
 
       {/* Drawdown */}
-      <Card title="Drawdown">
-        <DrawdownChart equityCurve={data.equity_curve} />
+      <Card>
+        <CardHeader>
+          <CardTitle>Drawdown</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DrawdownChart equityCurve={data.equity_curve} />
+        </CardContent>
       </Card>
 
       {/* Trade P&L Distribution */}
-      <Card title="Trade P&L Distribution">
-        <MetricsBarChart trades={data.trades} />
+      <Card>
+        <CardHeader>
+          <CardTitle>Trade P&L Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <MetricsBarChart trades={data.trades} />
+        </CardContent>
       </Card>
 
       {/* Signal Attribution */}
       {data.signal_attribution && data.signal_attribution.length > 0 && (
-        <Card title="Signal Attribution">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.signal_attribution.map(attr => (
-              <div key={attr.signalType} className="bg-gray-50 rounded-lg p-4">
-                <h4 className="font-semibold text-gray-900 capitalize mb-2">{attr.signalType} Signal</h4>
-                <div className="space-y-1 text-sm">
-                  <p className="text-gray-600">Buy Signals: <span className="font-mono">{attr.buySignals}</span></p>
-                  <p className="text-gray-600">Buy Accuracy: <span className="font-mono font-semibold">{attr.buyAccuracy.toFixed(1)}%</span></p>
-                  <p className="text-gray-600">Avg Score (Win): <span className="font-mono">{attr.avgScoreOnWin.toFixed(1)}</span></p>
-                  <p className="text-gray-600">Avg Score (Loss): <span className="font-mono">{attr.avgScoreOnLoss.toFixed(1)}</span></p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Signal Attribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.signal_attribution.map(attr => (
+                <div key={attr.signalType} className="bg-muted rounded-lg p-4">
+                  <h4 className="font-semibold text-foreground capitalize mb-2">{attr.signalType} Signal</h4>
+                  <div className="space-y-1 text-sm">
+                    <p className="text-muted-foreground">Buy Signals: <span className="font-mono">{attr.buySignals}</span></p>
+                    <p className="text-muted-foreground">Buy Accuracy: <span className="font-mono font-semibold">{attr.buyAccuracy.toFixed(1)}%</span></p>
+                    <p className="text-muted-foreground">Avg Score (Win): <span className="font-mono">{attr.avgScoreOnWin.toFixed(1)}</span></p>
+                    <p className="text-muted-foreground">Avg Score (Loss): <span className="font-mono">{attr.avgScoreOnLoss.toFixed(1)}</span></p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </CardContent>
         </Card>
       )}
 
       {/* Trade Table */}
-      <Card title="Trades">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-2 text-gray-500 font-medium">Symbol</th>
-                <th className="text-left py-2 text-gray-500 font-medium">Entry</th>
-                <th className="text-left py-2 text-gray-500 font-medium">Exit</th>
-                <th className="text-right py-2 text-gray-500 font-medium">Entry Price</th>
-                <th className="text-right py-2 text-gray-500 font-medium">Exit Price</th>
-                <th className="text-right py-2 text-gray-500 font-medium">P&L</th>
-                <th className="text-right py-2 text-gray-500 font-medium">P&L %</th>
-                <th className="text-right py-2 text-gray-500 font-medium">Days</th>
-                <th className="text-left py-2 text-gray-500 font-medium">Exit Reason</th>
-              </tr>
-            </thead>
-            <tbody>
+      <Card>
+        <CardHeader>
+          <CardTitle>Trades</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Symbol</TableHead>
+                <TableHead>Entry</TableHead>
+                <TableHead>Exit</TableHead>
+                <TableHead className="text-right">Entry Price</TableHead>
+                <TableHead className="text-right">Exit Price</TableHead>
+                <TableHead className="text-right">P&L</TableHead>
+                <TableHead className="text-right">P&L %</TableHead>
+                <TableHead className="text-right">Days</TableHead>
+                <TableHead>Exit Reason</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {data.trades.map(trade => (
-                <tr key={trade.id} className="border-b border-gray-100">
-                  <td className="py-2 font-mono font-medium">{trade.symbol}</td>
-                  <td className="py-2 text-gray-600">{trade.entryDate}</td>
-                  <td className="py-2 text-gray-600">{trade.exitDate}</td>
-                  <td className="py-2 text-right font-mono">${trade.entryPrice.toFixed(2)}</td>
-                  <td className="py-2 text-right font-mono">${trade.exitPrice.toFixed(2)}</td>
-                  <td className={`py-2 text-right font-mono ${trade.pnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <TableRow key={trade.id}>
+                  <TableCell className="font-mono font-medium">{trade.symbol}</TableCell>
+                  <TableCell className="text-muted-foreground">{trade.entryDate}</TableCell>
+                  <TableCell className="text-muted-foreground">{trade.exitDate}</TableCell>
+                  <TableCell className="text-right font-mono">${trade.entryPrice.toFixed(2)}</TableCell>
+                  <TableCell className="text-right font-mono">${trade.exitPrice.toFixed(2)}</TableCell>
+                  <TableCell className={`text-right font-mono ${trade.pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
                     ${trade.pnl.toFixed(2)}
-                  </td>
-                  <td className={`py-2 text-right font-mono ${trade.pnlPercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  </TableCell>
+                  <TableCell className={`text-right font-mono ${trade.pnlPercent >= 0 ? 'text-success' : 'text-destructive'}`}>
                     {trade.pnlPercent >= 0 ? '+' : ''}{trade.pnlPercent.toFixed(2)}%
-                  </td>
-                  <td className="py-2 text-right text-gray-600">{trade.holdingDays}</td>
-                  <td className="py-2 text-gray-500 text-xs capitalize">{trade.exitReason.replace('_', ' ')}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="text-right text-muted-foreground">{trade.holdingDays}</TableCell>
+                  <TableCell className="text-muted-foreground text-xs capitalize">{trade.exitReason.replace('_', ' ')}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </CardContent>
       </Card>
     </div>
   )
@@ -181,14 +212,16 @@ export default function BacktestResultPage() {
 
 function MetricCard({ label, value, positive }: { label: string; value: string; positive?: boolean }) {
   return (
-    <div className="card text-center">
-      <p className={`text-2xl font-bold font-mono ${
-        positive === undefined ? 'text-gray-900' :
-        positive ? 'text-green-600' : 'text-red-600'
-      }`}>
-        {value}
-      </p>
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
-    </div>
+    <Card>
+      <CardContent className="pt-6 text-center">
+        <p className={`text-2xl font-bold font-mono ${
+          positive === undefined ? 'text-foreground' :
+          positive ? 'text-success' : 'text-destructive'
+        }`}>
+          {value}
+        </p>
+        <p className="text-sm text-muted-foreground mt-1">{label}</p>
+      </CardContent>
+    </Card>
   )
 }

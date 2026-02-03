@@ -7,9 +7,11 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
-import Card from '@/components/common/Card'
-import Button from '@/components/common/Button'
-import InfoPanel from '@/components/common/InfoPanel'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { InfoPanel } from '@/components/ui/info-panel'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { FullStrategyConfig } from '@/types/strategy-config'
 
 interface StrategyRow {
@@ -81,8 +83,20 @@ export default function StrategiesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <Skeleton className="h-8 w-32 mb-2" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-10 w-36" />
+        </div>
+        <Skeleton className="h-24 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Skeleton className="h-48" />
+          <Skeleton className="h-48" />
+          <Skeleton className="h-48" />
+        </div>
       </div>
     )
   }
@@ -91,12 +105,12 @@ export default function StrategiesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Strategies</h1>
-          <p className="text-gray-600 mt-1">Create and manage your trading strategies.</p>
+          <h1 className="text-2xl font-bold text-foreground">Strategies</h1>
+          <p className="text-muted-foreground mt-1">Create and manage your trading strategies.</p>
         </div>
-        <Link to="/strategies/new">
-          <Button>Create Strategy</Button>
-        </Link>
+        <Button asChild>
+          <Link to="/strategies/new">Create Strategy</Link>
+        </Button>
       </div>
 
       {/* Educational panel */}
@@ -115,89 +129,92 @@ export default function StrategiesPage() {
 
       {strategies.length === 0 ? (
         <Card>
-          <div className="text-center py-8">
-            <p className="text-gray-500 mb-2">You haven't created any strategies yet.</p>
-            <p className="text-gray-400 text-xs mb-4">
-              Start by creating your first strategy. Choose stocks, configure your rules, and test your ideas.
-            </p>
-            <Link to="/strategies/new">
-              <Button>Create Your First Strategy</Button>
-            </Link>
-          </div>
+          <CardContent className="pt-6">
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-2">You haven't created any strategies yet.</p>
+              <p className="text-muted-foreground/70 text-xs mb-4">
+                Start by creating your first strategy. Choose stocks, configure your rules, and test your ideas.
+              </p>
+              <Button asChild>
+                <Link to="/strategies/new">Create Your First Strategy</Link>
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {strategies.map(strategy => (
-            <Card key={strategy.id} className={`hover:shadow-card-hover transition-all duration-200 ${strategy.trading_mode !== 'none' ? 'ring-2 ring-green-400 ring-opacity-50' : ''}`}>
-              <div className="flex flex-col h-full">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-gray-900">{strategy.name}</h3>
-                    {strategy.trading_mode === 'paper' && (
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-semibold">
-                        Paper Trading
-                      </span>
-                    )}
-                    {strategy.trading_mode === 'live' && (
-                      <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-semibold">
-                        Live Trading
-                      </span>
-                    )}
-                  </div>
-                  {strategy.description && (
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{strategy.description}</p>
-                  )}
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {strategy.config.symbols?.map(s => (
-                      <span key={s} className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full font-mono">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                  {strategy.trading_mode !== 'none' && strategy.last_execution_at && (
-                    <p className="text-xs text-gray-400 mt-2">
-                      Last executed: {new Date(strategy.last_execution_at).toLocaleString()}
-                      {strategy.execution_status && (
-                        <span className={`ml-1 ${strategy.execution_status === 'success' ? 'text-green-600' : 'text-red-500'}`}>
-                          ({strategy.execution_status})
-                        </span>
+            <Card
+              key={strategy.id}
+              className={`hover:shadow-card-hover transition-all duration-200 ${strategy.trading_mode !== 'none' ? 'ring-2 ring-success/50' : ''}`}
+            >
+              <CardContent className="pt-6">
+                <div className="flex flex-col h-full">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-foreground">{strategy.name}</h3>
+                      {strategy.trading_mode === 'paper' && (
+                        <Badge variant="success">Paper Trading</Badge>
                       )}
-                    </p>
-                  )}
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-xs text-gray-400">
-                    Updated {new Date(strategy.updated_at).toLocaleDateString()}
-                  </span>
-                  <div className="flex gap-2">
-                    {isOwner && (
-                      <button
-                        onClick={() => handleToggleTrading(strategy.id, strategy.trading_mode)}
-                        className={`text-sm font-medium ${
-                          strategy.trading_mode !== 'none'
-                            ? 'text-orange-600 hover:text-orange-700'
-                            : 'text-green-600 hover:text-green-700'
-                        }`}
-                      >
-                        {strategy.trading_mode !== 'none' ? 'Deactivate' : 'Activate'}
-                      </button>
+                      {strategy.trading_mode === 'live' && (
+                        <Badge variant="destructive">Live Trading</Badge>
+                      )}
+                    </div>
+                    {strategy.description && (
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{strategy.description}</p>
                     )}
-                    <Link
-                      to={`/strategies/${strategy.id}`}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-                    >
-                      Edit
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(strategy.id)}
-                      className="text-sm text-red-500 hover:text-red-600 font-medium"
-                    >
-                      Delete
-                    </button>
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {strategy.config.symbols?.map(s => (
+                        <span key={s} className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded-full font-mono">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                    {strategy.trading_mode !== 'none' && strategy.last_execution_at && (
+                      <p className="text-xs text-muted-foreground/70 mt-2">
+                        Last executed: {new Date(strategy.last_execution_at).toLocaleString()}
+                        {strategy.execution_status && (
+                          <span className={`ml-1 ${strategy.execution_status === 'success' ? 'text-success' : 'text-destructive'}`}>
+                            ({strategy.execution_status})
+                          </span>
+                        )}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground/70">
+                      Updated {new Date(strategy.updated_at).toLocaleDateString()}
+                    </span>
+                    <div className="flex gap-2">
+                      {isOwner && (
+                        <button
+                          onClick={() => handleToggleTrading(strategy.id, strategy.trading_mode)}
+                          className={`text-sm font-medium ${
+                            strategy.trading_mode !== 'none'
+                              ? 'text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300'
+                              : 'text-success hover:text-success/80'
+                          }`}
+                        >
+                          {strategy.trading_mode !== 'none' ? 'Deactivate' : 'Activate'}
+                        </button>
+                      )}
+                      <Link
+                        to={`/strategies/${strategy.id}`}
+                        className="text-sm text-primary hover:text-primary/80 font-medium"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(strategy.id)}
+                        className="text-sm text-destructive hover:text-destructive/80 font-medium"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </CardContent>
             </Card>
           ))}
         </div>

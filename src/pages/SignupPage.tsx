@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useEffect } from 'react'
 import SignupForm from '@/components/auth/SignupForm'
 import Footer from '@/components/layout/Footer'
+import { Card, CardContent } from '@/components/ui/card'
 
 export default function SignupPage() {
   const { user } = useAuth()
@@ -19,7 +20,7 @@ export default function SignupPage() {
   }, [user, navigate])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-slate-50 to-slate-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50/50 via-background to-background flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
@@ -27,20 +28,22 @@ export default function SignupPage() {
               <img
                 src="/natnlab-logo+name-svg.svg"
                 alt="NATN Lab"
-                className="h-14 mx-auto mb-4"
+                className="h-14 mx-auto mb-4 dark:brightness-0 dark:invert"
               />
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Create your account</h1>
-            <p className="text-gray-600 mt-1">Start building and testing trading strategies</p>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">Create your account</h1>
+            <p className="text-muted-foreground mt-1">Start building and testing trading strategies</p>
           </div>
 
-          <div className="card shadow-elevated">
-            <SignupForm />
-          </div>
+          <Card className="shadow-elevated">
+            <CardContent className="pt-6">
+              <SignupForm />
+            </CardContent>
+          </Card>
 
-          <p className="text-center mt-6 text-sm text-gray-600">
+          <p className="text-center mt-6 text-sm text-muted-foreground">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link to="/login" className="text-primary hover:text-primary/80 font-medium">
               Sign in
             </Link>
           </p>

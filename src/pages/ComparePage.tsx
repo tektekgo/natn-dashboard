@@ -6,8 +6,10 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
-import Card from '@/components/common/Card'
-import InfoPanel from '@/components/common/InfoPanel'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { InfoPanel } from '@/components/ui/info-panel'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import ComparisonChart from '@/components/charts/ComparisonChart'
 import type { ComparisonResult, BacktestMetrics, PortfolioSnapshot, ClosedTrade, SignalAttribution } from '@/engine/types'
 import type { FullStrategyConfig } from '@/types/strategy-config'
@@ -80,8 +82,13 @@ export default function ComparePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-48 mb-2" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-64 w-full" />
       </div>
     )
   }
@@ -89,8 +96,8 @@ export default function ComparePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Compare Strategies</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-2xl font-bold text-foreground">Compare Strategies</h1>
+        <p className="text-muted-foreground mt-1">
           Select backtests to compare their performance side by side.
         </p>
       </div>
@@ -111,85 +118,103 @@ export default function ComparePage() {
       </InfoPanel>
 
       {/* Selection */}
-      <Card title="Select Backtests" subtitle="Check at least 2 backtests to compare their performance.">
-        {backtests.length === 0 ? (
-          <p className="text-gray-500 text-sm">No backtests available. Run a backtest first.</p>
-        ) : (
-          <div className="space-y-2">
-            {backtests.map(bt => (
-              <label
-                key={bt.id}
-                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer border transition-colors ${
-                  selected.has(bt.id)
-                    ? 'border-primary-300 bg-primary-50'
-                    : 'border-gray-200 hover:bg-gray-50'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.has(bt.id)}
-                  onChange={() => toggleSelection(bt.id)}
-                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm truncate">
-                    {bt.strategy_config.name || 'Unnamed'}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {bt.start_date} to {bt.end_date} | Return: {bt.metrics.totalReturn.toFixed(2)}%
-                  </p>
-                </div>
-              </label>
-            ))}
-          </div>
-        )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Select Backtests</CardTitle>
+          <CardDescription>Check at least 2 backtests to compare their performance.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {backtests.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No backtests available. Run a backtest first.</p>
+          ) : (
+            <div className="space-y-2">
+              {backtests.map(bt => (
+                <label
+                  key={bt.id}
+                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer border transition-colors ${
+                    selected.has(bt.id)
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:bg-muted'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.has(bt.id)}
+                    onChange={() => toggleSelection(bt.id)}
+                    className="rounded border-border text-primary focus:ring-primary"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-foreground text-sm truncate">
+                      {bt.strategy_config.name || 'Unnamed'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {bt.start_date} to {bt.end_date} | Return: {bt.metrics.totalReturn.toFixed(2)}%
+                    </p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          )}
+        </CardContent>
       </Card>
 
       {/* Comparison Chart */}
       {selectedResults.length >= 2 && (
         <>
-          <Card title="Equity Curve Comparison" subtitle="How each strategy's portfolio value changed over time.">
-            <ComparisonChart results={selectedResults} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Equity Curve Comparison</CardTitle>
+              <CardDescription>How each strategy's portfolio value changed over time.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ComparisonChart results={selectedResults} />
+            </CardContent>
           </Card>
 
-          <Card title="Metrics Comparison" subtitle="Side-by-side performance metrics for selected strategies.">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 text-gray-500 font-medium">Strategy</th>
-                    <th className="text-right py-2 text-gray-500 font-medium">Return</th>
-                    <th className="text-right py-2 text-gray-500 font-medium">Sharpe</th>
-                    <th className="text-right py-2 text-gray-500 font-medium">Max DD</th>
-                    <th className="text-right py-2 text-gray-500 font-medium">Win Rate</th>
-                    <th className="text-right py-2 text-gray-500 font-medium">Trades</th>
-                    <th className="text-right py-2 text-gray-500 font-medium">Profit Factor</th>
-                  </tr>
-                </thead>
-                <tbody>
+          <Card>
+            <CardHeader>
+              <CardTitle>Metrics Comparison</CardTitle>
+              <CardDescription>Side-by-side performance metrics for selected strategies.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Strategy</TableHead>
+                    <TableHead className="text-right">Return</TableHead>
+                    <TableHead className="text-right">Sharpe</TableHead>
+                    <TableHead className="text-right">Max DD</TableHead>
+                    <TableHead className="text-right">Win Rate</TableHead>
+                    <TableHead className="text-right">Trades</TableHead>
+                    <TableHead className="text-right">Profit Factor</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {selectedResults.map(r => (
-                    <tr key={r.label} className="border-b border-gray-100">
-                      <td className="py-2 font-medium text-gray-900">{r.label}</td>
-                      <td className={`py-2 text-right font-mono ${r.output.metrics.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <TableRow key={r.label}>
+                      <TableCell className="font-medium">{r.label}</TableCell>
+                      <TableCell className={`text-right font-mono ${r.output.metrics.totalReturn >= 0 ? 'text-success' : 'text-destructive'}`}>
                         {r.output.metrics.totalReturn.toFixed(2)}%
-                      </td>
-                      <td className="py-2 text-right font-mono">{r.output.metrics.sharpeRatio.toFixed(2)}</td>
-                      <td className="py-2 text-right font-mono text-red-600">{r.output.metrics.maxDrawdown.toFixed(2)}%</td>
-                      <td className="py-2 text-right font-mono">{r.output.metrics.winRate.toFixed(1)}%</td>
-                      <td className="py-2 text-right font-mono">{r.output.metrics.totalTrades}</td>
-                      <td className="py-2 text-right font-mono">{r.output.metrics.profitFactor === Infinity ? 'inf' : r.output.metrics.profitFactor.toFixed(2)}</td>
-                    </tr>
+                      </TableCell>
+                      <TableCell className="text-right font-mono">{r.output.metrics.sharpeRatio.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-mono text-destructive">{r.output.metrics.maxDrawdown.toFixed(2)}%</TableCell>
+                      <TableCell className="text-right font-mono">{r.output.metrics.winRate.toFixed(1)}%</TableCell>
+                      <TableCell className="text-right font-mono">{r.output.metrics.totalTrades}</TableCell>
+                      <TableCell className="text-right font-mono">{r.output.metrics.profitFactor === Infinity ? 'inf' : r.output.metrics.profitFactor.toFixed(2)}</TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </TableBody>
+              </Table>
+            </CardContent>
           </Card>
         </>
       )}
 
       {selectedResults.length === 1 && (
         <Card>
-          <p className="text-center text-gray-500 py-4">Select at least 2 backtests to compare.</p>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground py-4">Select at least 2 backtests to compare.</p>
+          </CardContent>
         </Card>
       )}
     </div>

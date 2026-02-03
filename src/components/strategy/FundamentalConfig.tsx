@@ -3,8 +3,9 @@
  * PE ratio, EPS, beta, dividend parameters with educational explanations.
  */
 
-import Input from '@/components/common/Input'
-import InfoPanel from '@/components/common/InfoPanel'
+import { InfoPanel } from '@/components/ui/info-panel'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import type { FundamentalConfig as FundamentalConfigType } from '@/types/strategy-config'
 
 interface FundamentalConfigProps {
@@ -27,7 +28,7 @@ export default function FundamentalConfig({ config, onChange }: FundamentalConfi
         </p>
       </InfoPanel>
 
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Valuation</h3>
+      <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Valuation</h3>
       <InfoPanel variant="tip" title="P/E Ratio Explained">
         <p>
           The <strong>Price-to-Earnings (P/E) ratio</strong> compares a stock's price to its earnings per share.
@@ -37,27 +38,33 @@ export default function FundamentalConfig({ config, onChange }: FundamentalConfi
         </p>
       </InfoPanel>
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          label="PE Ratio Min"
-          type="number"
-          min={0}
-          step={1}
-          value={config.peRatioMin}
-          onChange={e => update('peRatioMin', Number(e.target.value))}
-          helperText="Min acceptable PE (default 0)"
-        />
-        <Input
-          label="PE Ratio Max"
-          type="number"
-          min={1}
-          step={1}
-          value={config.peRatioMax}
-          onChange={e => update('peRatioMax', Number(e.target.value))}
-          helperText="Max acceptable PE (default 40)"
-        />
+        <div className="space-y-2">
+          <Label htmlFor="peRatioMin">PE Ratio Min</Label>
+          <Input
+            id="peRatioMin"
+            type="number"
+            min={0}
+            step={1}
+            value={config.peRatioMin}
+            onChange={e => update('peRatioMin', Number(e.target.value))}
+          />
+          <p className="text-xs text-muted-foreground">Min acceptable PE (default 0)</p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="peRatioMax">PE Ratio Max</Label>
+          <Input
+            id="peRatioMax"
+            type="number"
+            min={1}
+            step={1}
+            value={config.peRatioMax}
+            onChange={e => update('peRatioMax', Number(e.target.value))}
+          />
+          <p className="text-xs text-muted-foreground">Max acceptable PE (default 40)</p>
+        </div>
       </div>
 
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mt-6">Growth &amp; Risk</h3>
+      <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mt-6">Growth &amp; Risk</h3>
       <InfoPanel variant="tip" title="Understanding EPS Growth, Beta, and Dividends">
         <ul className="list-disc list-inside space-y-1">
           <li><strong>EPS Growth</strong> — Earnings Per Share growth rate. Positive means the company is growing profits. Set a minimum to filter for growing companies.</li>
@@ -67,41 +74,53 @@ export default function FundamentalConfig({ config, onChange }: FundamentalConfi
         </ul>
       </InfoPanel>
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          label="Min EPS Growth"
-          type="number"
-          step={0.01}
-          value={config.epsGrowthMin}
-          onChange={e => update('epsGrowthMin', Number(e.target.value))}
-          helperText="As decimal (0.10 = 10% growth)"
-        />
-        <Input
-          label="Max Beta"
-          type="number"
-          min={0}
-          step={0.1}
-          value={config.betaMax}
-          onChange={e => update('betaMax', Number(e.target.value))}
-          helperText="Max volatility (1.5 = 50% more volatile)"
-        />
-        <Input
-          label="Min Dividend Yield"
-          type="number"
-          min={0}
-          step={0.01}
-          value={config.dividendYieldMin}
-          onChange={e => update('dividendYieldMin', Number(e.target.value))}
-          helperText="As decimal (0.02 = 2% yield)"
-        />
-        <Input
-          label="Min Market Cap ($)"
-          type="number"
-          min={0}
-          step={1000000000}
-          value={config.marketCapMin}
-          onChange={e => update('marketCapMin', Number(e.target.value))}
-          helperText="$1B = 1,000,000,000"
-        />
+        <div className="space-y-2">
+          <Label htmlFor="epsGrowthMin">Min EPS Growth</Label>
+          <Input
+            id="epsGrowthMin"
+            type="number"
+            step={0.01}
+            value={config.epsGrowthMin}
+            onChange={e => update('epsGrowthMin', Number(e.target.value))}
+          />
+          <p className="text-xs text-muted-foreground">As decimal (0.10 = 10% growth)</p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="betaMax">Max Beta</Label>
+          <Input
+            id="betaMax"
+            type="number"
+            min={0}
+            step={0.1}
+            value={config.betaMax}
+            onChange={e => update('betaMax', Number(e.target.value))}
+          />
+          <p className="text-xs text-muted-foreground">Max volatility (1.5 = 50% more volatile)</p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="dividendYieldMin">Min Dividend Yield</Label>
+          <Input
+            id="dividendYieldMin"
+            type="number"
+            min={0}
+            step={0.01}
+            value={config.dividendYieldMin}
+            onChange={e => update('dividendYieldMin', Number(e.target.value))}
+          />
+          <p className="text-xs text-muted-foreground">As decimal (0.02 = 2% yield)</p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="marketCapMin">Min Market Cap ($)</Label>
+          <Input
+            id="marketCapMin"
+            type="number"
+            min={0}
+            step={1000000000}
+            value={config.marketCapMin}
+            onChange={e => update('marketCapMin', Number(e.target.value))}
+          />
+          <p className="text-xs text-muted-foreground">$1B = 1,000,000,000</p>
+        </div>
       </div>
     </div>
   )

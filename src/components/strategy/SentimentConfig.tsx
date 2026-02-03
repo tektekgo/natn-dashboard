@@ -3,9 +3,10 @@
  * Shown but disabled for backtesting (can't retroactively get historical news).
  */
 
-import Slider from '@/components/common/Slider'
-import Toggle from '@/components/common/Toggle'
-import InfoPanel from '@/components/common/InfoPanel'
+import { Slider } from '@/components/ui/slider'
+import { Switch } from '@/components/ui/switch'
+import { InfoPanel } from '@/components/ui/info-panel'
+import { Label } from '@/components/ui/label'
 import type { SentimentConfig as SentimentConfigType } from '@/types/strategy-config'
 
 interface SentimentConfigProps {
@@ -25,19 +26,24 @@ export default function SentimentConfig({ config, onChange }: SentimentConfigPro
         </p>
       </InfoPanel>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+      <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 text-sm text-warning-foreground">
         Sentiment analysis is not available for backtesting since historical
         news/social data cannot be reliably reconstructed. When sentiment is disabled,
         technical and fundamental weights are automatically normalized.
       </div>
 
-      <Toggle
-        label="Enable Sentiment"
-        checked={config.enabled}
-        onChange={checked => onChange({ ...config, enabled: checked })}
-        disabled
-        description="Available for live trading only"
-      />
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <Label htmlFor="sentiment-toggle">Enable Sentiment</Label>
+          <p className="text-xs text-muted-foreground">Available for live trading only</p>
+        </div>
+        <Switch
+          id="sentiment-toggle"
+          checked={config.enabled}
+          onCheckedChange={checked => onChange({ ...config, enabled: checked })}
+          disabled
+        />
+      </div>
 
       <div className={config.enabled ? '' : 'opacity-50 pointer-events-none'}>
         <InfoPanel variant="tip" title="Score Thresholds">
@@ -47,22 +53,34 @@ export default function SentimentConfig({ config, onChange }: SentimentConfigPro
             from social media analysis.
           </p>
         </InfoPanel>
-        <Slider
-          label="News Score Threshold"
-          value={config.newsScoreThreshold}
-          onChange={v => onChange({ ...config, newsScoreThreshold: v })}
-          min={0}
-          max={100}
-          className="mt-3"
-        />
-        <Slider
-          label="Social Score Threshold"
-          value={config.socialScoreThreshold}
-          onChange={v => onChange({ ...config, socialScoreThreshold: v })}
-          min={0}
-          max={100}
-          className="mt-4"
-        />
+        <div className="space-y-4 mt-3">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label>News Score Threshold</Label>
+              <span className="text-sm text-muted-foreground">{config.newsScoreThreshold}</span>
+            </div>
+            <Slider
+              value={[config.newsScoreThreshold]}
+              onValueChange={([v]) => onChange({ ...config, newsScoreThreshold: v })}
+              min={0}
+              max={100}
+              step={1}
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label>Social Score Threshold</Label>
+              <span className="text-sm text-muted-foreground">{config.socialScoreThreshold}</span>
+            </div>
+            <Slider
+              value={[config.socialScoreThreshold]}
+              onValueChange={([v]) => onChange({ ...config, socialScoreThreshold: v })}
+              min={0}
+              max={100}
+              step={1}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )

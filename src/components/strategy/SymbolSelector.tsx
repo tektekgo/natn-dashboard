@@ -4,7 +4,10 @@
  */
 
 import { useState } from 'react'
-import InfoPanel from '@/components/common/InfoPanel'
+import { InfoPanel } from '@/components/ui/info-panel'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 interface SymbolSelectorProps {
   symbols: string[]
@@ -52,58 +55,57 @@ export default function SymbolSelector({ symbols, onChange }: SymbolSelectorProp
       {/* Selected symbols */}
       <div className="flex flex-wrap gap-2">
         {symbols.map(s => (
-          <span
-            key={s}
-            className="inline-flex items-center gap-1 px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-mono"
-          >
+          <Badge key={s} variant="secondary" className="font-mono text-sm px-3 py-1">
             {s}
             <button
               type="button"
               onClick={() => removeSymbol(s)}
-              className="text-primary-400 hover:text-primary-600 ml-1"
+              className="ml-2 hover:text-destructive"
             >
               &times;
             </button>
-          </span>
+          </Badge>
         ))}
         {symbols.length === 0 && (
-          <span className="text-sm text-gray-400">No symbols selected</span>
+          <span className="text-sm text-muted-foreground">No symbols selected</span>
         )}
       </div>
 
       {/* Input */}
       <div className="flex gap-2">
-        <input
+        <Input
           type="text"
           value={input}
           onChange={e => setInput(e.target.value.toUpperCase())}
           onKeyDown={handleKeyDown}
           placeholder="Enter symbol (e.g. AAPL)"
-          className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none hover:border-gray-300 transition-colors placeholder:text-gray-400"
+          className="flex-1 font-mono"
         />
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={() => addSymbol(input)}
           disabled={!input.trim()}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
         >
           Add
-        </button>
+        </Button>
       </div>
 
       {/* Popular symbols */}
       <div>
-        <p className="text-xs text-gray-500 mb-2">Popular stocks:</p>
+        <p className="text-xs text-muted-foreground mb-2">Popular stocks:</p>
         <div className="flex flex-wrap gap-1">
           {POPULAR_SYMBOLS.filter(s => !symbols.includes(s)).slice(0, 12).map(s => (
-            <button
+            <Button
               key={s}
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => addSymbol(s)}
-              className="px-2 py-1 text-xs font-mono bg-gray-50 text-gray-600 rounded hover:bg-gray-100 border border-gray-200"
+              className="font-mono text-xs h-7 px-2"
             >
               +{s}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

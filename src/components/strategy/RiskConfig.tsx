@@ -3,9 +3,10 @@
  * Take profit, stop loss, position sizing with educational explanations.
  */
 
-import Slider from '@/components/common/Slider'
-import Input from '@/components/common/Input'
-import InfoPanel from '@/components/common/InfoPanel'
+import { Slider } from '@/components/ui/slider'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { InfoPanel } from '@/components/ui/info-panel'
 import type { RiskConfig as RiskConfigType } from '@/types/strategy-config'
 
 interface RiskConfigProps {
@@ -32,22 +33,32 @@ export default function RiskConfig({ config, onChange }: RiskConfigProps) {
         </ul>
       </InfoPanel>
       <div className="grid grid-cols-2 gap-6">
-        <Slider
-          label="Take Profit"
-          value={config.takeProfitPercent}
-          onChange={v => onChange({ ...config, takeProfitPercent: v })}
-          min={1}
-          max={50}
-          suffix="%"
-        />
-        <Slider
-          label="Stop Loss"
-          value={config.stopLossPercent}
-          onChange={v => onChange({ ...config, stopLossPercent: v })}
-          min={1}
-          max={30}
-          suffix="%"
-        />
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Take Profit</Label>
+            <span className="text-sm text-muted-foreground">{config.takeProfitPercent}%</span>
+          </div>
+          <Slider
+            value={[config.takeProfitPercent]}
+            onValueChange={([v]) => onChange({ ...config, takeProfitPercent: v })}
+            min={1}
+            max={50}
+            step={1}
+          />
+        </div>
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Stop Loss</Label>
+            <span className="text-sm text-muted-foreground">{config.stopLossPercent}%</span>
+          </div>
+          <Slider
+            value={[config.stopLossPercent]}
+            onValueChange={([v]) => onChange({ ...config, stopLossPercent: v })}
+            min={1}
+            max={30}
+            step={1}
+          />
+        </div>
       </div>
 
       <InfoPanel variant="tip" title="Position Sizing">
@@ -58,33 +69,46 @@ export default function RiskConfig({ config, onChange }: RiskConfigProps) {
         </ul>
       </InfoPanel>
       <div className="grid grid-cols-2 gap-4">
-        <Slider
-          label="Max Position Size"
-          value={config.maxPositionSizePercent}
-          onChange={v => onChange({ ...config, maxPositionSizePercent: v })}
-          min={5}
-          max={100}
-          suffix="%"
-        />
-        <Input
-          label="Max Open Positions"
-          type="number"
-          min={1}
-          max={50}
-          value={config.maxOpenPositions}
-          onChange={e => onChange({ ...config, maxOpenPositions: Number(e.target.value) })}
-          helperText="Simultaneous stock holdings"
-        />
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label>Max Position Size</Label>
+            <span className="text-sm text-muted-foreground">{config.maxPositionSizePercent}%</span>
+          </div>
+          <Slider
+            value={[config.maxPositionSizePercent]}
+            onValueChange={([v]) => onChange({ ...config, maxPositionSizePercent: v })}
+            min={5}
+            max={100}
+            step={1}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="maxOpenPositions">Max Open Positions</Label>
+          <Input
+            id="maxOpenPositions"
+            type="number"
+            min={1}
+            max={50}
+            value={config.maxOpenPositions}
+            onChange={e => onChange({ ...config, maxOpenPositions: Number(e.target.value) })}
+          />
+          <p className="text-xs text-muted-foreground">Simultaneous stock holdings</p>
+        </div>
       </div>
 
-      <Slider
-        label="Max Portfolio Risk"
-        value={config.maxPortfolioRiskPercent}
-        onChange={v => onChange({ ...config, maxPortfolioRiskPercent: v })}
-        min={10}
-        max={100}
-        suffix="%"
-      />
+      <div className="space-y-2">
+        <div className="flex justify-between">
+          <Label>Max Portfolio Risk</Label>
+          <span className="text-sm text-muted-foreground">{config.maxPortfolioRiskPercent}%</span>
+        </div>
+        <Slider
+          value={[config.maxPortfolioRiskPercent]}
+          onValueChange={([v]) => onChange({ ...config, maxPortfolioRiskPercent: v })}
+          min={10}
+          max={100}
+          step={1}
+        />
+      </div>
     </div>
   )
 }

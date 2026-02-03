@@ -1,6 +1,6 @@
 /**
  * Metrics bar chart using Recharts.
- * Shows win/loss trade distribution.
+ * Shows win/loss trade distribution with theme support.
  */
 
 import {
@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts'
+import { useTheme } from '@/contexts/ThemeContext'
 import type { ClosedTrade } from '@/engine/types'
 
 interface MetricsBarChartProps {
@@ -21,8 +22,11 @@ interface MetricsBarChartProps {
 }
 
 export default function MetricsBarChart({ trades, height = 250 }: MetricsBarChartProps) {
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+
   if (trades.length === 0) {
-    return <div className="text-gray-400 text-center py-8">No trades to display</div>
+    return <div className="text-muted-foreground text-center py-8">No trades to display</div>
   }
 
   const chartData = trades.map((trade, i) => ({
@@ -31,25 +35,34 @@ export default function MetricsBarChart({ trades, height = 250 }: MetricsBarChar
     symbol: trade.symbol,
   }))
 
+  const gridColor = isDark ? 'hsl(217 32.6% 17.5%)' : '#f3f4f6'
+  const tickColor = isDark ? 'hsl(215 20.2% 65.1%)' : '#9ca3af'
+  const tooltipBg = isDark ? 'hsl(222.2 84% 4.9%)' : 'white'
+  const tooltipBorder = isDark ? 'hsl(217 32.6% 17.5%)' : '#e5e7eb'
+
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
         <XAxis
           dataKey="name"
-          tick={{ fontSize: 10, fill: '#9ca3af' }}
+          tick={{ fontSize: 10, fill: tickColor }}
           interval={0}
           angle={-45}
           textAnchor="end"
           height={60}
         />
         <YAxis
-          tick={{ fontSize: 11, fill: '#9ca3af' }}
+          tick={{ fontSize: 11, fill: tickColor }}
           tickFormatter={(v: number) => `${v}%`}
         />
         <Tooltip
           formatter={((value: number) => [`${Number(value).toFixed(2)}%`, 'P&L']) as any}
-          contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }}
+          contentStyle={{
+            borderRadius: '8px',
+            border: `1px solid ${tooltipBorder}`,
+            backgroundColor: tooltipBg,
+          }}
         />
         <Bar dataKey="pnl" radius={[4, 4, 0, 0]}>
           {chartData.map((entry, index) => (
