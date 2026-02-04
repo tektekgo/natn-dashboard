@@ -5,10 +5,28 @@
  */
 
 import { Link } from 'react-router-dom'
-import { APP_VERSION } from '@/lib/constants'
+import { getVersionString, getEnvironment } from '@/lib/version'
 
 interface FooterProps {
   variant?: 'full' | 'compact'
+}
+
+function VersionBadge({ className = '' }: { className?: string }) {
+  const env = getEnvironment()
+  const version = getVersionString()
+
+  return (
+    <span className={`inline-flex items-center gap-2 ${className}`}>
+      <span>{version}</span>
+      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${
+        env === 'Dev'
+          ? 'bg-amber-500/20 text-amber-300'
+          : 'bg-emerald-500/20 text-emerald-300'
+      }`}>
+        {env}
+      </span>
+    </span>
+  )
 }
 
 export default function Footer({ variant = 'compact' }: FooterProps) {
@@ -29,7 +47,9 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
                 <br />
                 Learn, test, and trade smarter.
               </p>
-              <p className="text-xs text-sidebar-foreground/30 mt-2">v{APP_VERSION}</p>
+              <div className="text-xs text-sidebar-foreground/30 mt-2">
+                <VersionBadge />
+              </div>
             </div>
 
             {/* Legal links */}
@@ -91,6 +111,9 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
   }
 
   // Compact footer for inner pages
+  const env = getEnvironment()
+  const version = getVersionString()
+
   return (
     <footer className="border-t border-border bg-card/60 px-6 py-3">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
@@ -110,6 +133,17 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
           <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
           <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
           <Link to="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link>
+          <span className="text-muted-foreground/60">|</span>
+          <span className="inline-flex items-center gap-1.5">
+            <span>{version}</span>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${
+              env === 'Dev'
+                ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
+                : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+            }`}>
+              {env}
+            </span>
+          </span>
         </div>
       </div>
     </footer>
