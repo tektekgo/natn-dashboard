@@ -3,17 +3,16 @@
  */
 
 // -----------------------------------------------------------------------------
-// App Version — update this when releasing
+// App Version — now managed dynamically via src/lib/version.ts
+// Import from '@/lib/version' for version info
 // -----------------------------------------------------------------------------
-
-export const APP_VERSION = '0.1.0'
 
 // -----------------------------------------------------------------------------
 // API Base URLs
 // -----------------------------------------------------------------------------
 
 export const ALPACA_DATA_BASE_URL = 'https://data.alpaca.markets/v2'
-export const FMP_BASE_URL = 'https://financialmodelingprep.com/api/v3'
+export const FMP_BASE_URL = 'https://financialmodelingprep.com/stable'
 export const ALPHAVANTAGE_BASE_URL = 'https://www.alphavantage.co/query'
 
 // -----------------------------------------------------------------------------
