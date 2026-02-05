@@ -43,6 +43,8 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
           setMagicLinkSent(true)
         }
       }
+    } catch {
+      setError('Unable to connect to the server. Please check your internet connection and try again.')
     } finally {
       setLoading(false)
     }
