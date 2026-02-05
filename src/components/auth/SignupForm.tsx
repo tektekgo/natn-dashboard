@@ -46,6 +46,8 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
         setSuccess(true)
         onSuccess?.()
       }
+    } catch {
+      setError('Unable to connect to the server. Please check your internet connection and try again.')
     } finally {
       setLoading(false)
     }
