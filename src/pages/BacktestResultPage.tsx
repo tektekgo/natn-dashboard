@@ -6,13 +6,17 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
+import { useBenchmark } from '@/hooks/useBenchmark'
 import { supabase } from '@/lib/supabase'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import EquityCurveChart from '@/components/charts/EquityCurveChart'
+import EquityCurveWithBenchmark from '@/components/charts/EquityCurveWithBenchmark'
 import DrawdownChart from '@/components/charts/DrawdownChart'
 import MetricsBarChart from '@/components/charts/MetricsBarChart'
+import MetricCardWithEducation from '@/components/backtest/MetricCardWithEducation'
+import EducationalChartHeader from '@/components/backtest/EducationalChartHeader'
+import StrategyReportCard from '@/components/backtest/StrategyReportCard'
 import type { BacktestMetrics, ClosedTrade, PortfolioSnapshot, SignalAttribution } from '@/engine/types'
 
 interface BacktestData {
@@ -34,6 +38,12 @@ export default function BacktestResultPage() {
   const { user } = useAuth()
   const [data, setData] = useState<BacktestData | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const { spyReturn, spyEquityCurve, loading: benchmarkLoading } = useBenchmark(
+    data?.start_date,
+    data?.end_date,
+    data?.initial_capital
+  )
 
   useEffect(() => {
     if (!user || !id) return
@@ -98,33 +108,89 @@ export default function BacktestResultPage() {
         </Link>
       </div>
 
+      {/* Strategy Report Card */}
+      <StrategyReportCard
+        metrics={m}
+        startDate={data.start_date}
+        endDate={data.end_date}
+        initialCapital={data.initial_capital}
+        spyReturn={spyReturn}
+      />
+
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <MetricCard label="Total Return" value={`${m.totalReturn >= 0 ? '+' : ''}${m.totalReturn.toFixed(2)}%`} positive={m.totalReturn >= 0} />
-        <MetricCard label="Sharpe Ratio" value={m.sharpeRatio.toFixed(2)} positive={m.sharpeRatio >= 1} />
-        <MetricCard label="Max Drawdown" value={`${m.maxDrawdown.toFixed(2)}%`} positive={false} />
-        <MetricCard label="Win Rate" value={`${m.winRate.toFixed(1)}%`} positive={m.winRate >= 50} />
-        <MetricCard label="Profit Factor" value={m.profitFactor === Infinity ? 'inf' : m.profitFactor.toFixed(2)} positive={m.profitFactor >= 1} />
-        <MetricCard label="Total Trades" value={String(m.totalTrades)} />
-        <MetricCard label="Avg Win" value={`+${m.avgWinPercent.toFixed(2)}%`} positive />
-        <MetricCard label="Avg Loss" value={`${m.avgLossPercent.toFixed(2)}%`} positive={false} />
+        <MetricCardWithEducation
+          metricKey="totalReturn"
+          value={`${m.totalReturn >= 0 ? '+' : ''}${m.totalReturn.toFixed(2)}%`}
+          rawValue={m.totalReturn}
+          positive={m.totalReturn >= 0}
+        />
+        <MetricCardWithEducation
+          metricKey="sharpeRatio"
+          value={m.sharpeRatio.toFixed(2)}
+          rawValue={m.sharpeRatio}
+          positive={m.sharpeRatio >= 1}
+        />
+        <MetricCardWithEducation
+          metricKey="maxDrawdown"
+          value={`${m.maxDrawdown.toFixed(2)}%`}
+          rawValue={m.maxDrawdown}
+          positive={false}
+        />
+        <MetricCardWithEducation
+          metricKey="winRate"
+          value={`${m.winRate.toFixed(1)}%`}
+          rawValue={m.winRate}
+          positive={m.winRate >= 50}
+        />
+        <MetricCardWithEducation
+          metricKey="profitFactor"
+          value={m.profitFactor === Infinity ? 'inf' : m.profitFactor.toFixed(2)}
+          rawValue={m.profitFactor === Infinity ? 5 : m.profitFactor}
+          positive={m.profitFactor >= 1}
+        />
+        <MetricCardWithEducation
+          metricKey="totalTrades"
+          value={String(m.totalTrades)}
+          rawValue={m.totalTrades}
+        />
+        <MetricCardWithEducation
+          metricKey="avgWinPercent"
+          value={`+${m.avgWinPercent.toFixed(2)}%`}
+          rawValue={m.avgWinPercent}
+          positive
+        />
+        <MetricCardWithEducation
+          metricKey="avgLossPercent"
+          value={`${m.avgLossPercent.toFixed(2)}%`}
+          rawValue={m.avgLossPercent}
+          positive={false}
+        />
       </div>
 
       {/* Equity Curve */}
       <Card>
-        <CardHeader>
-          <CardTitle>Equity Curve</CardTitle>
-        </CardHeader>
+        <EducationalChartHeader
+          title="Equity Curve"
+          learnTitle="Understanding the Equity Curve"
+          learnContent="This chart shows your portfolio value over time. An upward-sloping curve indicates consistent gains, while sharp dips reveal drawdown periods. The dashed gray line (when available) shows the S&P 500 for comparison — if your strategy line is above it, you're outperforming the market."
+        />
         <CardContent>
-          <EquityCurveChart data={data.equity_curve} />
+          <EquityCurveWithBenchmark
+            data={data.equity_curve}
+            benchmarkData={spyEquityCurve}
+            benchmarkLoading={benchmarkLoading}
+          />
         </CardContent>
       </Card>
 
       {/* Drawdown */}
       <Card>
-        <CardHeader>
-          <CardTitle>Drawdown</CardTitle>
-        </CardHeader>
+        <EducationalChartHeader
+          title="Drawdown"
+          learnTitle="Understanding Drawdown"
+          learnContent="Drawdown measures peak-to-trough decline in your portfolio. Each dip below 0% shows how much you would have lost from the most recent high point. Shallower and shorter drawdowns indicate better risk management. The deepest point is your Max Drawdown — the worst-case scenario during this backtest."
+        />
         <CardContent>
           <DrawdownChart equityCurve={data.equity_curve} />
         </CardContent>
@@ -132,9 +198,11 @@ export default function BacktestResultPage() {
 
       {/* Trade P&L Distribution */}
       <Card>
-        <CardHeader>
-          <CardTitle>Trade P&L Distribution</CardTitle>
-        </CardHeader>
+        <EducationalChartHeader
+          title="Trade P&L Distribution"
+          learnTitle="Understanding Trade P&L"
+          learnContent="Each bar represents one trade's profit or loss as a percentage. Green bars are winning trades, red bars are losing trades. Ideally, you want many green bars and small red bars. If a few large green bars account for most of your profit, the strategy may be reliant on outliers rather than a consistent edge."
+        />
         <CardContent>
           <MetricsBarChart trades={data.trades} />
         </CardContent>
@@ -143,9 +211,11 @@ export default function BacktestResultPage() {
       {/* Signal Attribution */}
       {data.signal_attribution && data.signal_attribution.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle>Signal Attribution</CardTitle>
-          </CardHeader>
+          <EducationalChartHeader
+            title="Signal Attribution"
+            learnTitle="Understanding Signal Attribution"
+            learnContent="Signal attribution breaks down how each signal type (technical, fundamental) contributed to your trades. It shows how many buy signals each type generated, their accuracy rate, and the average signal score on winning vs. losing trades. This helps you understand which signals are driving performance."
+          />
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {data.signal_attribution.map(attr => (
@@ -166,9 +236,11 @@ export default function BacktestResultPage() {
 
       {/* Trade Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Trades</CardTitle>
-        </CardHeader>
+        <EducationalChartHeader
+          title="Trades"
+          learnTitle="Understanding the Trade Log"
+          learnContent="This table lists every trade your strategy executed during the backtest. Each row is a complete round-trip (buy and sell). The exit reason tells you why the position was closed: take_profit means your target was hit, stop_loss means your risk limit was triggered, and signal_sell means the strategy detected a sell signal."
+        />
         <CardContent>
           <Table>
             <TableHeader>
@@ -207,21 +279,5 @@ export default function BacktestResultPage() {
         </CardContent>
       </Card>
     </div>
-  )
-}
-
-function MetricCard({ label, value, positive }: { label: string; value: string; positive?: boolean }) {
-  return (
-    <Card>
-      <CardContent className="pt-6 text-center">
-        <p className={`text-2xl font-bold font-mono ${
-          positive === undefined ? 'text-foreground' :
-          positive ? 'text-success' : 'text-destructive'
-        }`}>
-          {value}
-        </p>
-        <p className="text-sm text-muted-foreground mt-1">{label}</p>
-      </CardContent>
-    </Card>
   )
 }
