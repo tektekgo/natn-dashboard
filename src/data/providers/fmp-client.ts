@@ -17,7 +17,7 @@ export class FMPClient implements IFundamentalDataProvider {
   }
 
   async fetchProfile(symbol: string): Promise<FundamentalData | null> {
-    const url = `${FMP_BASE_URL}/profile/${symbol}?apikey=${this.apiKey}`
+    const url = `${FMP_BASE_URL}/profile?symbol=${symbol}&apikey=${this.apiKey}`
     const response = await fetchWithRetry(url)
 
     if (!response.ok) {
@@ -87,7 +87,7 @@ export class FMPClient implements IFundamentalDataProvider {
   }
 
   private async fetchKeyMetrics(symbol: string): Promise<FMPKeyMetrics[]> {
-    const url = `${FMP_BASE_URL}/key-metrics/${symbol}?period=quarter&limit=20&apikey=${this.apiKey}`
+    const url = `${FMP_BASE_URL}/key-metrics?symbol=${symbol}&period=quarter&limit=20&apikey=${this.apiKey}`
     const response = await fetchWithRetry(url)
 
     if (!response.ok) {
@@ -98,7 +98,7 @@ export class FMPClient implements IFundamentalDataProvider {
   }
 
   private async fetchIncomeStatements(symbol: string): Promise<FMPIncomeStatement[]> {
-    const url = `${FMP_BASE_URL}/income-statement/${symbol}?period=quarter&limit=20&apikey=${this.apiKey}`
+    const url = `${FMP_BASE_URL}/income-statement?symbol=${symbol}&period=quarter&limit=20&apikey=${this.apiKey}`
     const response = await fetchWithRetry(url)
 
     if (!response.ok) {
