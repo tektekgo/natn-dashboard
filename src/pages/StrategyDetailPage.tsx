@@ -18,10 +18,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 import StrategyForm from '@/components/strategy/StrategyForm'
 import BacktestProgress from '@/components/backtest/BacktestProgress'
 import BacktestSummary from '@/components/backtest/BacktestSummary'
+import StrategyReportCard from '@/components/backtest/StrategyReportCard'
+import EducationalChartHeader from '@/components/backtest/EducationalChartHeader'
 import TradeTable from '@/components/backtest/TradeTable'
-import EquityCurveChart from '@/components/charts/EquityCurveChart'
+import EquityCurveWithBenchmark from '@/components/charts/EquityCurveWithBenchmark'
 import DrawdownChart from '@/components/charts/DrawdownChart'
 import SignalAttribution from '@/components/backtest/SignalAttribution'
+import { useBenchmark } from '@/hooks/useBenchmark'
 import { DEFAULT_STRATEGY_CONFIG, type FullStrategyConfig } from '@/types/strategy-config'
 import { runBacktest } from '@/engine/backtest-runner'
 import type { BacktestOutput, BacktestProgress as BacktestProgressType } from '@/engine/types'
@@ -54,6 +57,13 @@ export default function StrategyDetailPage() {
   // Date range for backtest
   const [startDate, setStartDate] = useState(format(subMonths(new Date(), 6), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+
+  // Benchmark data (fires when backtestResult is available)
+  const { spyReturn, spyEquityCurve, loading: benchmarkLoading } = useBenchmark(
+    backtestResult ? startDate : undefined,
+    backtestResult ? endDate : undefined,
+    backtestResult ? config.initialCapital : undefined
+  )
 
   // Load existing strategy
   useEffect(() => {
@@ -384,21 +394,38 @@ export default function StrategyDetailPage() {
       {/* Backtest Results */}
       {backtestResult && (
         <>
+          <StrategyReportCard
+            metrics={backtestResult.metrics}
+            startDate={startDate}
+            endDate={endDate}
+            initialCapital={config.initialCapital}
+            spyReturn={spyReturn}
+            compact
+          />
+
           <BacktestSummary metrics={backtestResult.metrics} />
 
           <Card>
-            <CardHeader>
-              <CardTitle>Equity Curve</CardTitle>
-            </CardHeader>
+            <EducationalChartHeader
+              title="Equity Curve"
+              learnTitle="Understanding the Equity Curve"
+              learnContent="This chart shows your portfolio value over time. An upward-sloping curve indicates consistent gains, while sharp dips reveal drawdown periods. The dashed gray line (when available) shows the S&P 500 for comparison — if your strategy line is above it, you're outperforming the market."
+            />
             <CardContent>
-              <EquityCurveChart data={backtestResult.equityCurve} />
+              <EquityCurveWithBenchmark
+                data={backtestResult.equityCurve}
+                benchmarkData={spyEquityCurve}
+                benchmarkLoading={benchmarkLoading}
+              />
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Drawdown</CardTitle>
-            </CardHeader>
+            <EducationalChartHeader
+              title="Drawdown"
+              learnTitle="Understanding Drawdown"
+              learnContent="Drawdown measures peak-to-trough decline in your portfolio. Each dip below 0% shows how much you would have lost from the most recent high point. Shallower and shorter drawdowns indicate better risk management. The deepest point is your Max Drawdown — the worst-case scenario during this backtest."
+            />
             <CardContent>
               <DrawdownChart equityCurve={backtestResult.equityCurve} />
             </CardContent>
