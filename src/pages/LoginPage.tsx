@@ -30,7 +30,7 @@ export default function LoginPage() {
               <img
                 src="/natnlab-logo+name-svg.svg"
                 alt="NATN Lab"
-                className="h-14 mx-auto mb-4 dark:brightness-0 dark:invert"
+                className="h-28 mx-auto mb-6 dark:brightness-0 dark:invert"
               />
             </Link>
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Welcome back</h1>

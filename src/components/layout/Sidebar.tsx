@@ -26,7 +26,7 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
         <img
           src={collapsed ? '/natnlab-logo-svg.svg' : '/natnlab-logo+name-svg.svg'}
           alt="NATN Lab"
-          className={collapsed ? 'h-8 mx-auto brightness-0 invert opacity-90' : 'h-8 brightness-0 invert opacity-90'}
+          className={collapsed ? 'h-8 mx-auto brightness-0 invert' : 'h-10 brightness-0 invert'}
         />
       </div>
 
