@@ -40,7 +40,7 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
               <img
                 src="/natnlab-logo+name-svg.svg"
                 alt="NATN Lab"
-                className="h-10 brightness-0 invert opacity-80 mb-3"
+                className="h-14 brightness-0 invert mb-3"
               />
               <p className="text-sm text-sidebar-foreground/40">
                 Your Trading Strategy Laboratory.

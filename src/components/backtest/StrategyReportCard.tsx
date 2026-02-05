@@ -102,6 +102,7 @@ export default function StrategyReportCard({
   compact = false,
 }: StrategyReportCardProps) {
   const [insightsExpanded, setInsightsExpanded] = useState(false)
+  const [methodologyExpanded, setMethodologyExpanded] = useState(false)
   const grade = gradeStrategy(metrics)
   const benchmark = compareToBenchmark(metrics, spyReturn ?? null)
   const counts = insightTypeCounts(grade.insights)
@@ -168,6 +169,25 @@ export default function StrategyReportCard({
               </span>
             </p>
           </div>
+        </div>
+
+        {/* Collapsible Grade Methodology */}
+        <div>
+          <button
+            onClick={() => setMethodologyExpanded(!methodologyExpanded)}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full text-left"
+          >
+            {methodologyExpanded ? (
+              <ChevronDown className="w-4 h-4 flex-shrink-0" />
+            ) : (
+              <ChevronRight className="w-4 h-4 flex-shrink-0" />
+            )}
+            <span>How is this grade calculated?</span>
+          </button>
+
+          {methodologyExpanded && (
+            <GradeMethodologyPanel breakdown={grade.breakdown} />
+          )}
         </div>
 
         {/* Metric Breakdown Bars */}
@@ -288,6 +308,89 @@ function GradeCircle({ letter, size }: { letter: LetterGrade; size: 'sm' | 'lg' 
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <span className={`font-bold ${fontSize} ${gradeColor(letter)}`}>{letter}</span>
+      </div>
+    </div>
+  )
+}
+
+const GRADE_SCALE: { grade: string; range: string }[] = [
+  { grade: 'A+', range: '97–100' },
+  { grade: 'A', range: '93–96' },
+  { grade: 'A-', range: '90–92' },
+  { grade: 'B+', range: '87–89' },
+  { grade: 'B', range: '83–86' },
+  { grade: 'B-', range: '80–82' },
+  { grade: 'C+', range: '77–79' },
+  { grade: 'C', range: '73–76' },
+  { grade: 'C-', range: '70–72' },
+  { grade: 'D+', range: '65–69' },
+  { grade: 'D', range: '55–64' },
+  { grade: 'F', range: '<55' },
+]
+
+const IMPROVEMENT_TIPS: Record<string, string> = {
+  sharpeRatio: 'Reduce position sizes, add stop-losses, or diversify across more symbols to smooth returns.',
+  totalReturn: 'Relax take-profit targets, improve entry timing, or test trending stocks with stronger momentum.',
+  maxDrawdown: 'Set tighter stop-losses (5–7%), reduce position sizes during losing streaks.',
+  winRate: 'Add confirmation filters (e.g. RSI + volume together), raise signal quality thresholds.',
+  profitFactor: 'Tighten stop-losses to cut big losers, widen take-profit targets, review patterns behind your largest losses.',
+  totalTrades: 'Extend the backtest period, add more symbols, or relax entry filters to generate more signals.',
+}
+
+function GradeMethodologyPanel({ breakdown }: { breakdown: import('@/lib/strategy-grader').MetricBreakdown[] }) {
+  return (
+    <div className="mt-3 space-y-4 bg-muted rounded-lg p-4 text-xs">
+      {/* Grading Formula */}
+      <div>
+        <p className="font-semibold text-foreground mb-1">Grading Formula</p>
+        <p className="text-muted-foreground leading-relaxed">
+          Each metric is normalized to a 0–100 scale, then multiplied by its weight.
+          The weighted scores are summed into a composite score (0–100), which maps to a letter grade.
+        </p>
+      </div>
+
+      {/* Metric Weights */}
+      <div>
+        <p className="font-semibold text-foreground mb-1">Metric Weights</p>
+        <div className="space-y-1">
+          {breakdown.map(b => (
+            <div key={b.key} className="flex items-center justify-between">
+              <span className="text-muted-foreground">{b.label}</span>
+              <span className="text-foreground font-medium">{(b.weight * 100).toFixed(0)}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Grade Scale */}
+      <div>
+        <p className="font-semibold text-foreground mb-1">Grade Scale</p>
+        <div className="grid grid-cols-4 gap-x-4 gap-y-0.5">
+          {GRADE_SCALE.map(g => (
+            <div key={g.grade} className="flex items-center justify-between">
+              <span className="font-medium text-foreground">{g.grade}</span>
+              <span className="text-muted-foreground">{g.range}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* How to Improve */}
+      <div>
+        <p className="font-semibold text-foreground mb-1">How to Improve</p>
+        <div className="space-y-1.5">
+          {[...breakdown]
+            .sort((a, b) => b.weight - a.weight)
+            .map(b => (
+              <div key={b.key}>
+                <span className="text-foreground font-medium">{b.label}:</span>{' '}
+                <span className="text-muted-foreground">{IMPROVEMENT_TIPS[b.key] ?? 'Review this metric for optimization opportunities.'}</span>
+              </div>
+            ))}
+        </div>
+        <p className="text-muted-foreground mt-2 italic">
+          Pro tip: Sharpe Ratio has the highest weight (25%), so improving risk-adjusted returns has the biggest impact on your grade.
+        </p>
       </div>
     </div>
   )

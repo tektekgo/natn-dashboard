@@ -144,7 +144,7 @@ export function gradeStrategy(metrics: BacktestMetrics): GradeResult {
 
   const score = Math.round(weightedSum)
   const letter = compositeToLetter(score)
-  const insights = generateInsights(metrics)
+  const insights = generateInsights(metrics, breakdown)
 
   return { letter, score, breakdown, insights }
 }
@@ -165,8 +165,30 @@ function getMetricValue(metrics: BacktestMetrics, key: string): number {
 // Insights engine (~18 rules)
 // ---------------------------------------------------------------------------
 
-function generateInsights(m: BacktestMetrics): Insight[] {
+const OPPORTUNITY_TIPS: Record<string, string> = {
+  sharpeRatio: 'Reduce position sizes, add stop-losses, or diversify across more symbols to improve risk-adjusted returns.',
+  totalReturn: 'Relax take-profit targets, improve entry timing, or test trending stocks with stronger momentum.',
+  maxDrawdown: 'Set a 5–7% stop-loss, reduce position sizes during losing streaks, and consider scaling out of positions.',
+  winRate: 'Add confirmation filters (e.g. RSI + volume), raise signal quality thresholds to avoid low-conviction trades.',
+  profitFactor: 'Tighten stop-losses to cut big losers, widen take-profit targets, and review the patterns behind your largest losses.',
+  totalTrades: 'Extend the backtest period, add more symbols, or relax entry filters to generate more signals.',
+}
+
+function generateInsights(m: BacktestMetrics, breakdown: MetricBreakdown[]): Insight[] {
   const insights: Insight[] = []
+
+  // --- BIGGEST OPPORTUNITY ---
+  if (breakdown.length > 0) {
+    const weakest = [...breakdown].sort((a, b) => a.normalizedScore - b.normalizedScore)[0]
+    const tip = OPPORTUNITY_TIPS[weakest.key] || 'Review this metric for optimization opportunities.'
+    insights.push({
+      type: 'suggestion',
+      icon: 'target',
+      title: `Biggest Opportunity: ${weakest.label}`,
+      body: `Your ${weakest.label} score is ${weakest.normalizedScore}/100 — the weakest area (weighted ${(weakest.weight * 100).toFixed(0)}% of your grade). ${tip}`,
+      priority: 1,
+    })
+  }
 
   // --- STRENGTHS ---
 
@@ -276,6 +298,19 @@ function generateInsights(m: BacktestMetrics): Insight[] {
       body: `Only ${m.winRate.toFixed(0)}% of trades are profitable. Unless your average win is much larger than your average loss, this is unsustainable.`,
       priority: 2,
     })
+
+    if (m.winRate < 45 && m.avgWinPercent > 0 && m.avgLossPercent < 0) {
+      const rewardRisk = m.avgWinPercent / Math.abs(m.avgLossPercent)
+      if (rewardRisk < 1.5) {
+        insights.push({
+          type: 'suggestion',
+          icon: 'target',
+          title: 'Improve Entry Quality',
+          body: `Your reward-to-risk ratio is only ${rewardRisk.toFixed(1)}:1, too low for a ${m.winRate.toFixed(0)}% win rate. Add confirmation indicators (e.g. RSI + volume together) and filter for higher-quality setups to improve accuracy.`,
+          priority: 2,
+        })
+      }
+    }
   }
 
   if (m.totalReturn < 0) {
@@ -342,11 +377,12 @@ function generateInsights(m: BacktestMetrics): Insight[] {
   // --- SUGGESTIONS ---
 
   if (m.maxDrawdown <= -15) {
+    const suggestedStop = Math.max(3, Math.round(Math.abs(m.maxDrawdown) * 0.6))
     insights.push({
       type: 'suggestion',
       icon: 'settings',
       title: 'Tighten Stop-Loss',
-      body: 'Consider reducing your stop-loss percentage to limit drawdowns. A tighter stop may reduce win rate slightly but protect capital.',
+      body: `Your ${m.maxDrawdown.toFixed(1)}% max drawdown suggests stops are too wide. Try setting stop-loss at ${suggestedStop}% to limit future drawdowns. A tighter stop may reduce win rate slightly but protect capital.`,
       priority: 3,
     })
   }
@@ -356,8 +392,18 @@ function generateInsights(m: BacktestMetrics): Insight[] {
       type: 'suggestion',
       icon: 'calendar',
       title: 'Extend Backtest Period',
-      body: 'Run the backtest over a longer period (1-2 years) to capture different market conditions and increase statistical significance.',
+      body: `With only ${m.totalTrades} trades, results are unreliable. Extend your backtest to 1–2 years (or until you get 30+ trades) to capture both bull and bear market cycles and increase statistical significance.`,
       priority: 3,
+    })
+  }
+
+  if (m.sharpeRatio < 0.8 && m.maxDrawdown <= -20) {
+    insights.push({
+      type: 'suggestion',
+      icon: 'settings',
+      title: 'Reduce Position Size',
+      body: `Your Sharpe of ${m.sharpeRatio.toFixed(2)} combined with a ${m.maxDrawdown.toFixed(1)}% max drawdown suggests positions may be too large. Try reducing position size to 50–70% of current to smooth returns and limit drawdowns.`,
+      priority: 2,
     })
   }
 
@@ -366,7 +412,7 @@ function generateInsights(m: BacktestMetrics): Insight[] {
       type: 'suggestion',
       icon: 'barChart',
       title: 'Reduce Volatility',
-      body: 'Your returns are positive but volatile. Consider smaller position sizes or diversifying across more symbols to smooth the equity curve.',
+      body: `Your returns are positive (+${m.totalReturn.toFixed(1)}%) but your Sharpe of ${m.sharpeRatio.toFixed(2)} is below 0.5, indicating high volatility. Target a Sharpe above 1.0 by reducing position sizes or diversifying across more symbols to smooth the equity curve.`,
       priority: 3,
     })
   }

@@ -10,14 +10,10 @@ const LandingPage = () => {
       {/* Navigation — frosted glass, sticky */}
       <nav className="bg-background/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 border-b border-border">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo with Name */}
-          <div className="flex items-center">
-            <img
-              src="/natnlab-logo+name-svg.svg"
-              alt="NATN Lab"
-              className="h-8 md:h-10 dark:brightness-0 dark:invert"
-            />
-          </div>
+          {/* Brand text — image logo is in the hero section */}
+          <Link to="/" className="text-xl font-bold tracking-tight text-foreground hover:opacity-80 transition-opacity">
+            NATN Lab
+          </Link>
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <Button variant="secondary" asChild>

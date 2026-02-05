@@ -4,13 +4,16 @@
  */
 
 import { useEffect, useState } from 'react'
+import { HelpCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { InfoPanel } from '@/components/ui/info-panel'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import ComparisonChart from '@/components/charts/ComparisonChart'
+import { METRIC_EDUCATION } from '@/lib/metric-education'
 import type { ComparisonResult, BacktestMetrics, PortfolioSnapshot, ClosedTrade, SignalAttribution } from '@/engine/types'
 import type { FullStrategyConfig } from '@/types/strategy-config'
 
@@ -181,12 +184,12 @@ export default function ComparePage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Strategy</TableHead>
-                    <TableHead className="text-right">Return</TableHead>
-                    <TableHead className="text-right">Sharpe</TableHead>
-                    <TableHead className="text-right">Max DD</TableHead>
-                    <TableHead className="text-right">Win Rate</TableHead>
-                    <TableHead className="text-right">Trades</TableHead>
-                    <TableHead className="text-right">Profit Factor</TableHead>
+                    <MetricTableHeader metricKey="totalReturn" label="Return" />
+                    <MetricTableHeader metricKey="sharpeRatio" label="Sharpe" />
+                    <MetricTableHeader metricKey="maxDrawdown" label="Max DD" />
+                    <MetricTableHeader metricKey="winRate" label="Win Rate" />
+                    <MetricTableHeader metricKey="totalTrades" label="Trades" />
+                    <MetricTableHeader metricKey="profitFactor" label="Profit Factor" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -218,5 +221,32 @@ export default function ComparePage() {
         </Card>
       )}
     </div>
+  )
+}
+
+function MetricTableHeader({ metricKey, label }: { metricKey: string; label: string }) {
+  const ed = METRIC_EDUCATION[metricKey]
+  return (
+    <TableHead className="text-right">
+      <span className="inline-flex items-center justify-end gap-1">
+        {label}
+        {ed && (
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="text-muted-foreground/40 hover:text-muted-foreground transition-colors cursor-help">
+                  <HelpCircle className="w-3 h-3" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs">
+                <p className="text-xs font-medium">{ed.label}</p>
+                <p className="text-xs mt-1">{ed.shortDescription}</p>
+                <p className="text-xs text-muted-foreground mt-1 italic">{ed.proTip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </span>
+    </TableHead>
   )
 }
