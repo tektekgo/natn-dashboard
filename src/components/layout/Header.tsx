@@ -3,7 +3,9 @@
  * Clean professional header with user avatar, theme toggle, and sign out.
  */
 
+import { MessageSquare } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { useAiChatContext } from '@/hooks/useAiChatContext'
 import { useNavigate } from 'react-router-dom'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Button } from '@/components/ui/button'
@@ -13,6 +15,7 @@ import { Badge } from '@/components/ui/badge'
 
 export default function Header() {
   const { user, profile, signOut } = useAuth()
+  const { isOpen, setIsOpen } = useAiChatContext()
   const navigate = useNavigate()
 
   async function handleSignOut() {
@@ -42,6 +45,16 @@ export default function Header() {
 
       <div className="flex items-center gap-3">
         <ThemeToggle />
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsOpen(!isOpen)}
+          className="h-9 w-9"
+          title="AI Assistant"
+        >
+          <MessageSquare className="h-5 w-5" />
+        </Button>
 
         {user && (
           <>

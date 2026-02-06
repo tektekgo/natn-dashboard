@@ -6,6 +6,7 @@ import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
 import Footer from './Footer'
+import ChatDrawer from '@/components/ai/ChatDrawer'
 
 export default function DashboardLayout() {
   return (
@@ -18,6 +19,7 @@ export default function DashboardLayout() {
         </main>
         <Footer />
       </div>
+      <ChatDrawer />
     </div>
   )
 }

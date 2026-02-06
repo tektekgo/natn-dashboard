@@ -5,9 +5,14 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { Download, Bot } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { useAiChatContext } from '@/hooks/useAiChatContext'
 import { useBenchmark } from '@/hooks/useBenchmark'
 import { supabase } from '@/lib/supabase'
+import { exportBacktestCsv } from '@/lib/csv-export'
+import { gradeStrategy } from '@/lib/strategy-grader'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -36,6 +41,7 @@ interface BacktestData {
 export default function BacktestResultPage() {
   const { id } = useParams<{ id: string }>()
   const { user } = useAuth()
+  const { openWithContext } = useAiChatContext()
   const [data, setData] = useState<BacktestData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -103,9 +109,44 @@ export default function BacktestResultPage() {
             {data.start_date} to {data.end_date}
           </p>
         </div>
-        <Link to="/strategies" className="text-primary hover:text-primary/80 text-sm font-medium">
-          Back to Strategies
-        </Link>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportBacktestCsv(
+              data.strategy_config.name,
+              m,
+              data.trades,
+              data.start_date,
+              data.end_date
+            )}
+          >
+            <Download className="w-4 h-4 mr-1" />
+            Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const grade = gradeStrategy(m)
+              openWithContext({
+                strategyConfig: {
+                  name: data.strategy_config.name,
+                },
+                metrics: m,
+                trades: data.trades.slice(0, 20),
+                gradeResult: grade,
+                backtestId: data.id,
+              })
+            }}
+          >
+            <Bot className="w-4 h-4 mr-1" />
+            Ask AI
+          </Button>
+          <Link to="/strategies" className="text-primary hover:text-primary/80 text-sm font-medium">
+            Back to Strategies
+          </Link>
+        </div>
       </div>
 
       {/* Strategy Report Card */}

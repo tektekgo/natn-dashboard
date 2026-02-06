@@ -51,6 +51,7 @@ export type Database = {
           current_uses: number
           expires_at: string | null
           is_active: boolean
+          grants_tier: string
           created_at: string
         }
         Insert: {
@@ -62,6 +63,7 @@ export type Database = {
           current_uses?: number
           expires_at?: string | null
           is_active?: boolean
+          grants_tier?: string
           created_at?: string
         }
         Update: {
@@ -73,6 +75,7 @@ export type Database = {
           current_uses?: number
           expires_at?: string | null
           is_active?: boolean
+          grants_tier?: string
         }
         Relationships: []
       }
