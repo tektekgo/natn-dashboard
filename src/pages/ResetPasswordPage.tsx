@@ -1,23 +1,16 @@
 /**
- * Sign up page.
+ * Password reset page.
+ * Handles both requesting a reset link and setting a new password.
  */
 
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
-import { useEffect } from 'react'
-import SignupForm from '@/components/auth/SignupForm'
+import ResetPasswordForm from '@/components/auth/ResetPasswordForm'
 import Footer from '@/components/layout/Footer'
 import { Card, CardContent } from '@/components/ui/card'
 
-export default function SignupPage() {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard', { replace: true })
-    }
-  }, [user, navigate])
+export default function ResetPasswordPage() {
+  const { isPasswordRecovery } = useAuth()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50/50 via-background to-background flex flex-col">
@@ -31,18 +24,24 @@ export default function SignupPage() {
                 className="h-56 mx-auto mb-6 dark:brightness-0 dark:invert"
               />
             </Link>
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">Create your account</h1>
-            <p className="text-muted-foreground mt-1">Strictly by invite only — request a code from the platform owner</p>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight">
+              {isPasswordRecovery ? 'Set new password' : 'Reset your password'}
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              {isPasswordRecovery
+                ? 'Enter your new password below'
+                : 'Enter your email and we\'ll send you a reset link'}
+            </p>
           </div>
 
           <Card className="shadow-elevated">
             <CardContent className="pt-6">
-              <SignupForm />
+              <ResetPasswordForm />
             </CardContent>
           </Card>
 
           <p className="text-center mt-6 text-sm text-muted-foreground">
-            Already have an account?{' '}
+            Remember your password?{' '}
             <Link to="/login" className="text-primary hover:text-primary/80 font-medium">
               Sign in
             </Link>

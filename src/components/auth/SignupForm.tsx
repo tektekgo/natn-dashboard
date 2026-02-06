@@ -1,6 +1,6 @@
 /**
  * Sign up form component.
- * Registration with optional invite code.
+ * Registration requires a valid invite code.
  */
 
 import { useState } from 'react'
@@ -39,7 +39,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
 
     setLoading(true)
     try {
-      const result = await signUp(email, password, inviteCode || undefined)
+      const result = await signUp(email, password, inviteCode)
       if (result.error) {
         setError(result.error)
       } else {
@@ -113,15 +113,14 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="invite-code">
-          Invite Code <span className="text-muted-foreground">(optional)</span>
-        </Label>
+        <Label htmlFor="invite-code">Invite Code</Label>
         <Input
           id="invite-code"
           type="text"
           value={inviteCode}
           onChange={e => setInviteCode(e.target.value)}
-          placeholder="Enter invite code"
+          required
+          placeholder="Required — ask the platform owner"
         />
       </div>
 

@@ -47,43 +47,47 @@ export async function signInWithMagicLink(email: string): Promise<AuthResult> {
 
 /**
  * Sign up with email and password.
- * Optionally validates an invite code.
+ * Requires a valid invite code (enforced server-side by DB trigger).
  */
 export async function signUp(
   email: string,
   password: string,
-  inviteCode?: string
+  inviteCode: string
 ): Promise<AuthResult> {
-  // Validate invite code if provided
-  if (inviteCode) {
-    const { data: codeData, error: codeError } = await supabase
-      .from('invite_codes')
-      .select('id, max_uses, current_uses, is_active, expires_at')
-      .eq('code', inviteCode)
-      .single()
-
-    if (codeError || !codeData) {
-      return { success: false, error: 'Invalid invite code.' }
-    }
-
-    if (!codeData.is_active) {
-      return { success: false, error: 'This invite code is no longer active.' }
-    }
-
-    if (codeData.current_uses >= codeData.max_uses) {
-      return { success: false, error: 'This invite code has been fully used.' }
-    }
-
-    if (codeData.expires_at && new Date(codeData.expires_at) < new Date()) {
-      return { success: false, error: 'This invite code has expired.' }
-    }
+  if (!inviteCode.trim()) {
+    return { success: false, error: 'An invite code is required to create an account.' }
   }
 
+  // Client-side pre-validation for UX (real enforcement is the DB trigger)
+  const { data: codeData, error: codeError } = await supabase
+    .from('invite_codes')
+    .select('id, max_uses, current_uses, is_active, expires_at')
+    .eq('code', inviteCode)
+    .single()
+
+  if (codeError || !codeData) {
+    return { success: false, error: 'Invalid invite code.' }
+  }
+
+  if (!codeData.is_active) {
+    return { success: false, error: 'This invite code is no longer active.' }
+  }
+
+  if (codeData.current_uses >= codeData.max_uses) {
+    return { success: false, error: 'This invite code has been fully used.' }
+  }
+
+  if (codeData.expires_at && new Date(codeData.expires_at) < new Date()) {
+    return { success: false, error: 'This invite code has expired.' }
+  }
+
+  // Pass invite_code in metadata so the DB trigger can read it
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       emailRedirectTo: `${import.meta.env.VITE_APP_URL}/dashboard`,
+      data: { invite_code: inviteCode },
     },
   })
 
@@ -91,28 +95,38 @@ export async function signUp(
     return { success: false, error: error.message }
   }
 
-  // Update invite code usage if one was provided
-  if (inviteCode && data.user) {
-    await supabase
-      .from('invite_codes')
-      .update({
-        current_uses: (await supabase
-          .from('invite_codes')
-          .select('current_uses')
-          .eq('code', inviteCode)
-          .single()
-        ).data?.current_uses ?? 0 + 1,
-      })
-      .eq('code', inviteCode)
-
-    // Store invite code on user profile
-    await supabase
-      .from('user_profiles')
-      .update({ invite_code_used: inviteCode })
-      .eq('id', data.user.id)
-  }
+  // The DB trigger handles: invite code validation, incrementing usage,
+  // creating user_profiles with invite_code_used and subscription_tier.
 
   return { success: true, user: data.user ?? undefined }
+}
+
+/**
+ * Send a password reset email.
+ */
+export async function resetPassword(email: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${import.meta.env.VITE_APP_URL}/reset-password`,
+  })
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  return { success: true }
+}
+
+/**
+ * Update the current user's password (used after clicking reset link).
+ */
+export async function updatePassword(newPassword: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.updateUser({ password: newPassword })
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  return { success: true }
 }
 
 /**
