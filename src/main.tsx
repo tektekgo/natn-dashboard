@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { AiChatProvider } from './contexts/AiChatContext'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import App from './App'
 import './index.css'
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <ThemeProvider defaultTheme="system">
           <AuthProvider>
-            <App />
+            <AiChatProvider>
+              <App />
+            </AiChatProvider>
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>
