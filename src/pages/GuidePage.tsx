@@ -6,6 +6,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { InfoPanel } from '@/components/ui/info-panel'
+import { useAuth } from '@/hooks/useAuth'
 
 interface FaqItem {
   question: string
@@ -98,6 +99,8 @@ function FaqSection({ items }: { items: FaqItem[] }) {
 }
 
 export default function GuidePage() {
+  const { isOwner } = useAuth()
+
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -385,6 +388,115 @@ export default function GuidePage() {
           <FaqSection items={faqs} />
         </CardContent>
       </Card>
+
+      {/* Owner Administration — only visible to owner */}
+      {isOwner && (
+        <>
+          <div className="pt-4">
+            <h2 className="text-xl font-bold text-foreground">Owner Administration</h2>
+            <p className="text-muted-foreground mt-1">
+              Platform management documentation (visible only to you)
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Owner Setup */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-xs text-primary font-bold">1</span>
+                  Owner Setup
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-3">
+                <p>
+                  The owner role is set manually via the Supabase SQL Editor. It cannot be assigned through the dashboard UI.
+                </p>
+                <div className="bg-muted/50 rounded-lg p-3 font-mono text-xs">
+                  <p className="text-foreground">UPDATE user_profiles</p>
+                  <p className="text-foreground">SET role = 'owner'</p>
+                  <p className="text-foreground">WHERE email = 'your@email.com';</p>
+                </div>
+                <p>
+                  Run this in <strong className="text-foreground">Supabase Dashboard &gt; SQL Editor</strong> after
+                  creating your account through the normal signup flow with an invite code.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Invite Code Management */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="w-6 h-6 rounded bg-emerald-500/10 flex items-center justify-center text-xs text-emerald-500 font-bold">2</span>
+                  Invite Code Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-3">
+                <p>Invite code lifecycle:</p>
+                <ol className="list-decimal list-inside space-y-1.5">
+                  <li><strong className="text-foreground">Create</strong> — Admin page &gt; generate a code with max uses, expiry date, and tier grant</li>
+                  <li><strong className="text-foreground">Distribute</strong> — Copy the code and share it with prospective users</li>
+                  <li><strong className="text-foreground">Monitor</strong> — Admin page shows usage count and status for each code</li>
+                  <li><strong className="text-foreground">Retire</strong> — Delete or let codes expire when no longer needed</li>
+                </ol>
+                <p>
+                  The <strong className="text-foreground">grants_tier</strong> field determines which subscription tier
+                  new users receive. Server-side enforcement ensures invalid or expired codes are rejected at signup.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* User Onboarding */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="w-6 h-6 rounded bg-purple-500/10 flex items-center justify-center text-xs text-purple-500 font-bold">3</span>
+                  User Onboarding
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-3">
+                <p>To invite a new user:</p>
+                <ol className="list-decimal list-inside space-y-1.5">
+                  <li>Create an invite code on the Admin page</li>
+                  <li>Share the code with the user</li>
+                  <li>User visits the signup page and enters the code along with email/password</li>
+                </ol>
+                <p className="mt-2">What happens server-side when they sign up:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>A database trigger validates the invite code</li>
+                  <li>The code's usage count is incremented</li>
+                  <li>A user profile is created with the tier granted by the code</li>
+                  <li>If the code is invalid, expired, or fully used, signup is rejected</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Platform Management */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="w-6 h-6 rounded bg-amber-500/10 flex items-center justify-center text-xs text-amber-500 font-bold">4</span>
+                  Platform Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-3">
+                <p><strong className="text-foreground">Viewing users:</strong></p>
+                <p>Supabase Dashboard &gt; Table Editor &gt; <code className="bg-muted px-1 rounded">user_profiles</code></p>
+
+                <p><strong className="text-foreground">Changing a user's tier:</strong></p>
+                <p>Update the <code className="bg-muted px-1 rounded">subscription_tier</code> column directly in the table editor (free, basic, pro, premium).</p>
+
+                <p><strong className="text-foreground">Password resets:</strong></p>
+                <p>Users can reset their own passwords via the login page. If needed, you can also trigger a reset from Supabase Dashboard &gt; Authentication &gt; Users.</p>
+
+                <p><strong className="text-foreground">Deactivating users:</strong></p>
+                <p>In Supabase Dashboard &gt; Authentication &gt; Users, find the user and click "Ban user" to prevent login.</p>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
 
       {/* Disclaimer */}
       <InfoPanel variant="info" title="Disclaimer">
