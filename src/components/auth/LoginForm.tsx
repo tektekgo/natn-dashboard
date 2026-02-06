@@ -92,7 +92,16 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
       {mode === 'password' && (
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <a
+              href="/reset-password"
+              className="text-xs text-primary hover:text-primary/80"
+              tabIndex={-1}
+            >
+              Forgot password?
+            </a>
+          </div>
           <Input
             id="password"
             type="password"
