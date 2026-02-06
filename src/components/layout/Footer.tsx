@@ -78,6 +78,11 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
                     Agreements &amp; Guidelines
                   </Link>
                 </li>
+                <li>
+                  <Link to="/guide" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">
+                    User Guide
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -141,6 +146,7 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
           <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
           <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
           <Link to="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link>
+          <Link to="/guide" className="hover:text-primary transition-colors">Guide</Link>
           <span className="text-muted-foreground/30">|</span>
           <span className="inline-flex items-center gap-1.5">
             <span className="bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent font-medium">
