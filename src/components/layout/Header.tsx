@@ -3,7 +3,7 @@
  * Clean professional header with user avatar, theme toggle, and sign out.
  */
 
-import { MessageSquare } from 'lucide-react'
+import { Bot, Sparkles } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useAiChatContext } from '@/hooks/useAiChatContext'
 import { useNavigate } from 'react-router-dom'
@@ -33,12 +33,12 @@ export default function Header() {
     .join('')
 
   return (
-    <header className="bg-card border-b border-border px-6 py-3 flex items-center justify-between">
+    <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b border-border px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <h2 className="text-sm text-primary font-bold uppercase tracking-wider">
+        <h2 className="text-sm bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent font-bold uppercase tracking-wider">
           NATN Lab
         </h2>
-        <Badge variant="secondary" className="hidden sm:inline-flex">
+        <Badge className="hidden sm:inline-flex bg-gradient-to-r from-primary/20 to-cyan-500/20 text-primary border-primary/30 hover:from-primary/30 hover:to-cyan-500/30">
           {profile?.subscription_tier === 'pro' ? 'Pro' : 'Beta'}
         </Badge>
       </div>
@@ -46,15 +46,28 @@ export default function Header() {
       <div className="flex items-center gap-3">
         <ThemeToggle />
 
-        <Button
-          variant="ghost"
-          size="icon"
+        {/* AI Assistant Button - Colorful CTA */}
+        <button
           onClick={() => setIsOpen(!isOpen)}
-          className="h-9 w-9"
-          title="AI Assistant"
+          className={`
+            relative group flex items-center gap-2 px-3 py-2 rounded-full
+            bg-gradient-to-r from-primary to-cyan-500
+            text-white text-sm font-medium
+            shadow-lg shadow-primary/25
+            hover:shadow-xl hover:shadow-primary/30
+            hover:scale-105
+            transition-all duration-200
+            ${isOpen ? 'ring-2 ring-primary/50 ring-offset-2 ring-offset-background' : ''}
+          `}
+          title="General AI Assistant — Ask any question about trading strategies, concepts, or get help anytime"
         >
-          <MessageSquare className="h-5 w-5" />
-        </Button>
+          <Bot className="h-4 w-4" />
+          <span className="hidden sm:inline">Ask AI</span>
+          <Sparkles className="h-3 w-3 opacity-75" />
+
+          {/* Subtle pulse animation */}
+          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-cyan-500 animate-ping opacity-20 pointer-events-none" />
+        </button>
 
         {user && (
           <>

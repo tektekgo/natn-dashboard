@@ -5,14 +5,13 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Download, Bot } from 'lucide-react'
+import { Download, Bot, Sparkles, FileBarChart } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useAiChatContext } from '@/hooks/useAiChatContext'
 import { useBenchmark } from '@/hooks/useBenchmark'
 import { supabase } from '@/lib/supabase'
 import { exportBacktestCsv } from '@/lib/csv-export'
 import { gradeStrategy } from '@/lib/strategy-grader'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -110,9 +109,8 @@ export default function BacktestResultPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
+          {/* Export CSV Button - Emerald gradient */}
+          <button
             onClick={() => exportBacktestCsv(
               data.strategy_config.name,
               m,
@@ -120,13 +118,24 @@ export default function BacktestResultPage() {
               data.start_date,
               data.end_date
             )}
+            className="
+              group flex items-center gap-2 px-4 py-2 rounded-full
+              bg-gradient-to-r from-emerald-500 to-teal-500
+              text-white text-sm font-medium
+              shadow-lg shadow-emerald-500/25
+              hover:shadow-xl hover:shadow-emerald-500/30
+              hover:scale-105
+              transition-all duration-200
+            "
+            title="Download backtest results as a CSV spreadsheet file"
           >
-            <Download className="w-4 h-4 mr-1" />
-            Export CSV
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+            <FileBarChart className="w-4 h-4" />
+            <span>Export CSV</span>
+            <Download className="w-3 h-3 opacity-75" />
+          </button>
+
+          {/* Ask AI Button - Blue/Cyan gradient with context indicator */}
+          <button
             onClick={() => {
               const grade = gradeStrategy(m)
               openWithContext({
@@ -139,10 +148,22 @@ export default function BacktestResultPage() {
                 backtestId: data.id,
               })
             }}
+            className="
+              group flex items-center gap-2 px-4 py-2 rounded-full
+              bg-gradient-to-r from-primary to-cyan-500
+              text-white text-sm font-medium
+              shadow-lg shadow-primary/25
+              hover:shadow-xl hover:shadow-primary/30
+              hover:scale-105
+              transition-all duration-200
+            "
+            title="Ask AI about THIS backtest — the AI will analyze your specific metrics, trades, and strategy grade"
           >
-            <Bot className="w-4 h-4 mr-1" />
-            Ask AI
-          </Button>
+            <Bot className="w-4 h-4" />
+            <span>Analyze Results</span>
+            <Sparkles className="w-3 h-3 opacity-75" />
+          </button>
+
           <Link to="/strategies" className="text-primary hover:text-primary/80 text-sm font-medium">
             Back to Strategies
           </Link>
