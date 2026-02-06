@@ -34,7 +34,7 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
       {/* Logo */}
       <div className="px-5 py-5 border-b border-sidebar-border">
         <img
-          src={collapsed ? '/natnlab-logo-svg.svg' : '/natnlab-logo+name-svg.svg'}
+          src={collapsed ? '/natnlab-logo-png.png' : '/natnlab-logo+name.png'}
           alt="NATN Lab"
           className={collapsed ? 'h-8 mx-auto brightness-0 invert' : 'h-10 brightness-0 invert'}
         />

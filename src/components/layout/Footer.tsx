@@ -38,7 +38,7 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
             {/* Brand + tagline */}
             <div>
               <img
-                src="/natnlab-logo+name-svg.svg"
+                src="/natnlab-logo+name.png"
                 alt="NATN Lab"
                 className="h-14 brightness-0 invert mb-3"
               />
