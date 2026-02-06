@@ -18,6 +18,7 @@ const TermsPage = lazy(() => import('./pages/TermsPage'))
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
 const GuidelinesPage = lazy(() => import('./pages/GuidelinesPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
+const GuidePage = lazy(() => import('./pages/GuidePage'))
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/guide" element={<GuidePage />} />
         </Route>
       </Routes>
     </Suspense>
