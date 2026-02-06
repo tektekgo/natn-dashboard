@@ -17,11 +17,13 @@ function VersionBadge({ className = '' }: { className?: string }) {
 
   return (
     <span className={`inline-flex items-center gap-2 ${className}`}>
-      <span>{version}</span>
-      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${
+      <span className="bg-gradient-to-r from-primary/60 to-cyan-500/60 bg-clip-text text-transparent font-medium">
+        {version}
+      </span>
+      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${
         env === 'Dev'
-          ? 'bg-amber-500/20 text-amber-300'
-          : 'bg-emerald-500/20 text-emerald-300'
+          ? 'bg-gradient-to-r from-amber-500/30 to-orange-500/30 text-amber-300 shadow-sm shadow-amber-500/20'
+          : 'bg-gradient-to-r from-emerald-500/30 to-teal-500/30 text-emerald-300 shadow-sm shadow-emerald-500/20'
       }`}>
         {env}
       </span>
@@ -32,44 +34,47 @@ function VersionBadge({ className = '' }: { className?: string }) {
 export default function Footer({ variant = 'compact' }: FooterProps) {
   if (variant === 'full') {
     return (
-      <footer className="bg-sidebar text-sidebar-foreground/60 mt-auto">
-        <div className="max-w-7xl mx-auto px-6 py-10">
+      <footer className="bg-gradient-to-b from-sidebar to-sidebar/95 text-sidebar-foreground/60 mt-auto relative overflow-hidden">
+        {/* Subtle gradient accent */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-cyan-500 to-primary opacity-50" />
+
+        <div className="max-w-7xl mx-auto px-6 py-10 relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Brand + tagline */}
             <div>
               <img
                 src="/natnlab-logo+name.png"
                 alt="NATN Lab"
-                className="h-14 brightness-0 invert mb-3"
+                className="h-14 mb-3"
               />
-              <p className="text-sm text-sidebar-foreground/40">
+              <p className="text-sm bg-gradient-to-r from-sidebar-foreground/60 to-sidebar-foreground/40 bg-clip-text text-transparent">
                 Your Trading Strategy Laboratory.
                 <br />
                 Learn, test, and trade smarter.
               </p>
-              <div className="text-xs text-sidebar-foreground/30 mt-2">
+              <div className="text-xs mt-3">
                 <VersionBadge />
               </div>
             </div>
 
             {/* Legal links */}
             <div>
-              <h4 className="text-sm font-semibold text-sidebar-foreground/80 uppercase tracking-wide mb-3">
+              <h4 className="text-sm font-semibold bg-gradient-to-r from-primary/80 to-cyan-500/80 bg-clip-text text-transparent uppercase tracking-wide mb-3">
                 Legal
               </h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link to="/terms" className="hover:text-sidebar-foreground transition-colors">
+                  <Link to="/terms" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">
                     Terms of Use
                   </Link>
                 </li>
                 <li>
-                  <Link to="/privacy" className="hover:text-sidebar-foreground transition-colors">
+                  <Link to="/privacy" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link to="/guidelines" className="hover:text-sidebar-foreground transition-colors">
+                  <Link to="/guidelines" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">
                     Agreements &amp; Guidelines
                   </Link>
                 </li>
@@ -78,7 +83,7 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
 
             {/* Disclaimer */}
             <div>
-              <h4 className="text-sm font-semibold text-sidebar-foreground/80 uppercase tracking-wide mb-3">
+              <h4 className="text-sm font-semibold bg-gradient-to-r from-primary/80 to-cyan-500/80 bg-clip-text text-transparent uppercase tracking-wide mb-3">
                 Disclaimer
               </h4>
               <p className="text-sm text-sidebar-foreground/40">
@@ -90,7 +95,7 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-sidebar-border">
+        <div className="border-t border-sidebar-border/50 bg-gradient-to-r from-transparent via-primary/5 to-transparent">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <p className="text-sm text-sidebar-foreground/40 text-center">
               &copy; 2026{' '}
@@ -98,7 +103,7 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
                 href="https://ai-focus.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors"
+                className="bg-gradient-to-r from-primary/70 to-cyan-500/70 bg-clip-text text-transparent hover:from-primary hover:to-cyan-500 transition-all font-medium"
               >
                 ai-focus.org
               </a>
@@ -115,15 +120,18 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
   const version = getVersionString()
 
   return (
-    <footer className="border-t border-border bg-card/60 px-6 py-3">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+    <footer className="border-t border-border bg-gradient-to-r from-card/60 via-card/80 to-card/60 px-6 py-3 relative overflow-hidden">
+      {/* Subtle top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground relative">
         <p>
           &copy; 2026{' '}
           <a
             href="https://ai-focus.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary transition-colors"
+            className="bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent hover:from-primary/80 hover:to-cyan-500/80 transition-all font-medium"
           >
             ai-focus.org
           </a>
@@ -133,13 +141,15 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
           <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
           <Link to="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
           <Link to="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link>
-          <span className="text-muted-foreground/60">|</span>
+          <span className="text-muted-foreground/30">|</span>
           <span className="inline-flex items-center gap-1.5">
-            <span>{version}</span>
-            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${
+            <span className="bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent font-medium">
+              {version}
+            </span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${
               env === 'Dev'
-                ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
-                : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400'
+                : 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400'
             }`}>
               {env}
             </span>
