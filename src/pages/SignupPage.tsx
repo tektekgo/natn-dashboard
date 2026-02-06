@@ -26,9 +26,9 @@ export default function SignupPage() {
           <div className="text-center mb-8">
             <Link to="/">
               <img
-                src="/natnlab-logo+name-svg.svg"
+                src="/natnlab-logo+name.png"
                 alt="NATN Lab"
-                className="h-28 mx-auto mb-6 dark:brightness-0 dark:invert"
+                className="h-56 mx-auto mb-6 dark:brightness-0 dark:invert"
               />
             </Link>
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Create your account</h1>
