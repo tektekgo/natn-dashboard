@@ -12,7 +12,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand text — image logo is in the hero section */}
           <Link to="/" className="text-xl font-bold tracking-tight text-foreground hover:opacity-80 transition-opacity">
-            NATN Lab
+            <span className="text-orange-500">N</span>ATN Lab
           </Link>
           <div className="flex items-center gap-4">
             <ThemeToggle />
@@ -44,11 +44,11 @@ const LandingPage = () => {
           <h1 className="text-5xl md:text-6xl font-extrabold text-foreground mb-4 tracking-tight">
             Welcome to{' '}
             <span className="bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
-              NATN Lab
+              <span className="text-orange-500">N</span>ATN Lab
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-3">
-            Your Trading Strategy Laboratory
+            Your <span className="font-mono text-orange-500">n8n</span> Automated Trading Network
           </p>
           <p className="uppercase tracking-wide font-semibold text-primary mb-6 text-sm md:text-base">
             Learn &middot; Test &middot; Trade Smarter

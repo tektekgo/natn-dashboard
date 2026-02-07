@@ -138,8 +138,8 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
           {/* Logo mark with glow */}
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-cyan-500 blur-lg opacity-20" />
-            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-cyan-500/20 flex items-center justify-center border border-primary/20">
-              <span className="text-xs font-bold bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent">
+            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500/20 to-orange-400/10 flex items-center justify-center border border-orange-500/20">
+              <span className="text-xs font-bold text-orange-500">
                 N
               </span>
             </div>
@@ -147,8 +147,8 @@ export default function Sidebar({ collapsed = false }: SidebarProps) {
 
           {/* Version text */}
           <p className="text-[10px] uppercase tracking-widest text-center">
-            <span className="bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent font-semibold">
-              NATN Lab
+            <span className="font-semibold">
+              <span className="text-orange-500">N</span><span className="bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent">ATN Lab</span>
             </span>
             <span className="text-sidebar-foreground/40"> v{APP_VERSION}</span>
           </p>

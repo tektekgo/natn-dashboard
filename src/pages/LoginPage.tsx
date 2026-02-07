@@ -34,7 +34,7 @@ export default function LoginPage() {
               />
             </Link>
             <h1 className="text-2xl font-bold text-foreground tracking-tight">Welcome back</h1>
-            <p className="text-muted-foreground mt-1">Sign in to your NATN Lab account</p>
+            <p className="text-muted-foreground mt-1">Sign in to your <span className="text-orange-500">N</span>ATN Lab account</p>
           </div>
 
           <Card className="shadow-elevated">
