@@ -285,6 +285,85 @@ export type Database = {
         }
         Relationships: []
       }
+      bot_executions: {
+        Row: {
+          id: string
+          strategy_id: string
+          user_id: string
+          executed_at: string
+          completed_at: string | null
+          status: string
+          risk_checks: Json
+          symbols_processed: number
+          orders_placed: number
+          orders_skipped: number
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          strategy_id: string
+          user_id: string
+          executed_at?: string
+          completed_at?: string | null
+          status?: string
+          risk_checks?: Json
+          symbols_processed?: number
+          orders_placed?: number
+          orders_skipped?: number
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          status?: string
+          completed_at?: string | null
+          risk_checks?: Json
+          symbols_processed?: number
+          orders_placed?: number
+          orders_skipped?: number
+          error_message?: string | null
+        }
+        Relationships: []
+      }
+      bot_execution_details: {
+        Row: {
+          id: string
+          execution_id: string
+          symbol: string
+          action: string
+          signals: Json
+          combined_score: number | null
+          outcome: string | null
+          order_id: string | null
+          price: number | null
+          quantity: number | null
+          reason: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          execution_id: string
+          symbol: string
+          action: string
+          signals?: Json
+          combined_score?: number | null
+          outcome?: string | null
+          order_id?: string | null
+          price?: number | null
+          quantity?: number | null
+          reason?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          signals?: Json
+          combined_score?: number | null
+          outcome?: string | null
+          order_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

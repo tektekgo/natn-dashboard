@@ -19,6 +19,7 @@ const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
 const GuidelinesPage = lazy(() => import('./pages/GuidelinesPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 const GuidePage = lazy(() => import('./pages/GuidePage'))
+const BotActivityPage = lazy(() => import('./pages/BotActivityPage'))
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
           <Route path="/strategies/:id" element={<StrategyDetailPage />} />
           <Route path="/backtest/:id" element={<BacktestResultPage />} />
           <Route path="/compare" element={<ComparePage />} />
+          <Route path="/activity" element={<BotActivityPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/guide" element={<GuidePage />} />
