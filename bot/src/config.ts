@@ -53,4 +53,8 @@ export const config = {
   // Bot behavior
   dryRun: optional('DRY_RUN', 'false') === 'true',
   userId: optional('USER_ID', ''),
+
+  // Execution context (set by GitHub Actions workflow, defaults for local runs)
+  botEnv: optional('BOT_ENV', 'development') as 'development' | 'production',
+  botTrigger: optional('BOT_TRIGGER', 'local') as 'local' | 'cron' | 'manual',
 } as const

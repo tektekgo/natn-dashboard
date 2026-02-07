@@ -495,6 +495,89 @@ export default function GuidePage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Trading Bot Operations */}
+          <div className="pt-4">
+            <h2 className="text-xl font-bold text-foreground">Trading Bot</h2>
+            <p className="text-muted-foreground mt-1">
+              Automated strategy execution via the standalone bot
+            </p>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">How the Bot Works</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <InfoPanel variant="info" title="Execution Flow">
+                <p>
+                  The trading bot runs automatically on weekdays at 9:45 AM ET (15 minutes after market open).
+                  It reads your active strategy, generates signals for each symbol, and places paper trades via Alpaca.
+                  Results are logged here on the Activity page with full per-symbol signal details.
+                </p>
+              </InfoPanel>
+
+              <div className="prose prose-sm max-w-none text-muted-foreground">
+                <h4 className="text-base font-semibold text-foreground">Three Ways to Run</h4>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-3">
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <span className="text-lg">💻</span> Local
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Run <code className="bg-muted px-1 rounded text-xs">cd bot && npm run dry-run</code> on your machine.
+                    Uses DEV Supabase. Good for testing code changes.
+                  </p>
+                </div>
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <span className="text-lg">👆</span> Manual Trigger
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    GitHub Actions &gt; Trading Bot &gt; Run workflow. Choose DEV or PROD environment
+                    and whether to dry-run. No laptop needed.
+                  </p>
+                </div>
+                <div className="border border-border rounded-lg p-4">
+                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <span className="text-lg">⏰</span> Daily Cron
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Runs automatically Mon-Fri at 9:45 AM ET against PROD.
+                    Places real paper trades. Sends Telegram summary. Fully hands-off.
+                  </p>
+                </div>
+              </div>
+
+              <div className="prose prose-sm max-w-none text-muted-foreground">
+                <h4 className="text-base font-semibold text-foreground">Telegram Notifications</h4>
+                <p>Every run sends notifications to your Telegram with colored context tags:</p>
+                <ul className="list-disc list-inside space-y-1 mt-2">
+                  <li><span className="font-semibold text-foreground">🟢 PROD</span> / <span className="font-semibold text-foreground">🔵 DEV</span> — which database was used</li>
+                  <li><span className="font-semibold text-foreground">⏰ Cron</span> / <span className="font-semibold text-foreground">👆 Manual</span> / <span className="font-semibold text-foreground">💻 Local</span> — how it was triggered</li>
+                  <li><span className="font-semibold text-foreground">🟠 DRY RUN</span> — no real orders placed (shown only when active)</li>
+                </ul>
+              </div>
+
+              <div className="prose prose-sm max-w-none text-muted-foreground">
+                <h4 className="text-base font-semibold text-foreground">What DRY RUN Controls</h4>
+                <p>
+                  DRY RUN only skips placing Alpaca orders. Everything else runs normally — signals are generated,
+                  execution logs are written, and Telegram notifications are sent. Your Activity page still gets populated.
+                </p>
+              </div>
+
+              <InfoPanel variant="learn" title="Future: Bring Your Own Broker (BYOB)">
+                <p>
+                  Currently, all trades execute on the platform owner's Alpaca paper account.
+                  In the future, users will be able to connect their own Alpaca paper trading credentials
+                  and run strategies independently on their own accounts.
+                </p>
+              </InfoPanel>
+            </CardContent>
+          </Card>
         </>
       )}
 
