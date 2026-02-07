@@ -1,0 +1,50 @@
+# NATN Trading Bot — Scheduled Execution
+# Runs Mon-Fri at 9:45 AM ET (13:45 UTC) — 15 min after market open
+# Also supports manual trigger for testing
+
+name: Trading Bot
+
+on:
+  schedule:
+    # 13:45 UTC = 9:45 AM ET (market opens at 9:30 AM ET)
+    - cron: '45 13 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no real orders)'
+        type: boolean
+        default: true
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install bot dependencies
+        working-directory: bot
+        run: npm install
+
+      - name: Run trading bot
+        working-directory: bot
+        env:
+          SUPABASE_URL: ${{ secrets.BOT_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.BOT_SUPABASE_SERVICE_ROLE_KEY }}
+          ALPACA_API_KEY: ${{ secrets.BOT_ALPACA_API_KEY }}
+          ALPACA_API_SECRET: ${{ secrets.BOT_ALPACA_API_SECRET }}
+          ALPACA_BASE_URL: https://paper-api.alpaca.markets
+          FMP_API_KEY: ${{ secrets.BOT_FMP_API_KEY }}
+          ALPHAVANTAGE_API_KEY: ${{ secrets.BOT_ALPHAVANTAGE_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.BOT_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.BOT_TELEGRAM_CHAT_ID }}
+          USER_ID: ${{ secrets.BOT_USER_ID }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: npx tsx src/index.ts
