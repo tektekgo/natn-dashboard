@@ -34,3 +34,43 @@ export interface BotExecutionDetail {
   reason: string | null
   created_at: string
 }
+
+// ---------------------------------------------------------------------------
+// Parsed types for visualization (C-2 upgrade)
+// ---------------------------------------------------------------------------
+
+export interface ParsedSignals {
+  technical: { score: number; action: string; reasons: string[] } | null
+  fundamental: { score: number; action: string; reasons: string[] } | null
+  sentiment: { score: number; action: string; reasons: string[] } | null
+  combined: { totalScore: number; action: string; reasons: string[] } | null
+}
+
+export interface ParsedRiskChecks {
+  dailyTrades: { current: number; limit: number; ok: boolean }
+  dailyPl: { percent: number; limit: number; ok: boolean }
+  exposure: { current: number; max: number; ok: boolean }
+  allPassed: boolean
+}
+
+export interface EnhancedStats {
+  totalRuns: number
+  totalOrders: number
+  successRate: number
+  avgDurationMs: number
+}
+
+export interface TrendDataPoint {
+  date: string
+  success: number
+  error: number
+  halted: number
+  running: number
+  orders: number
+}
+
+export interface ActionDistribution {
+  action: DetailAction
+  count: number
+  color: string
+}
