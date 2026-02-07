@@ -61,4 +61,6 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.BOT_TELEGRAM_CHAT_ID }}
           USER_ID: ${{ secrets.BOT_USER_ID }}
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          BOT_ENV: ${{ github.event_name == 'schedule' && 'production' || inputs.environment }}
+          BOT_TRIGGER: ${{ github.event_name == 'schedule' && 'cron' || 'manual' }}
         run: npx tsx src/index.ts

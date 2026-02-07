@@ -1,6 +1,9 @@
 /**
  * Telegram notification helper.
  * Sends formatted messages to the configured chat.
+ *
+ * Header format includes execution context:
+ *   🟢 PROD / 🔵 DEV  •  ⏰ Cron / 👆 Manual / 💻 Local  •  🟠 DRY RUN (if applicable)
  */
 
 import { config } from './config.js'
@@ -9,6 +12,15 @@ import type { SymbolResult, RiskCheckResult } from './types.js'
 /** Escape text for Telegram HTML parse mode (preserves intentional <b> etc). */
 function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+/** Build a context tag line for message headers. */
+function contextTag(): string {
+  const envEmoji = config.botEnv === 'production' ? '🟢 PROD' : '🔵 DEV'
+  const triggerEmoji = config.botTrigger === 'cron' ? '⏰ Cron'
+    : config.botTrigger === 'manual' ? '👆 Manual' : '💻 Local'
+  const dryTag = config.dryRun ? ' · 🟠 DRY RUN' : ''
+  return `${envEmoji} · ${triggerEmoji}${dryTag}`
 }
 
 async function sendMessage(text: string): Promise<void> {
@@ -36,11 +48,16 @@ async function sendMessage(text: string): Promise<void> {
 }
 
 export async function notifyExecutionStart(strategyName: string): Promise<void> {
-  await sendMessage(`<b>NATN Bot Started</b>\nStrategy: ${esc(strategyName)}\nTime: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}`)
+  await sendMessage(
+    `<b>NATN Bot Started</b>\n` +
+    `${contextTag()}\n` +
+    `Strategy: ${esc(strategyName)}\n` +
+    `Time: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}`
+  )
 }
 
 export async function notifyRiskHalt(checks: RiskCheckResult): Promise<void> {
-  const lines = ['<b>RISK HALT</b>']
+  const lines = [`<b>⛔ RISK HALT</b>\n${contextTag()}`]
   if (!checks.dailyTradeLimitOk) lines.push(`Daily trades: ${checks.dailyTrades}/${checks.dailyTradeLimit}`)
   if (!checks.dailyLossLimitOk) lines.push(`Daily P/L: ${checks.dailyPlPercent.toFixed(2)}% (limit: ${checks.dailyLossLimitPercent}%)`)
   if (!checks.exposureLimitOk) lines.push(`Exposure: $${checks.totalExposure.toFixed(0)} (max: $${checks.maxExposure.toFixed(0)})`)
@@ -69,7 +86,8 @@ export async function notifySummary(
   const skips = results.filter(r => r.action === 'skip').length
 
   const lines = [
-    `<b>NATN Bot Complete</b>${dryRun ? ' (DRY RUN)' : ''}`,
+    `<b>NATN Bot Complete</b>`,
+    contextTag(),
     `Strategy: ${esc(strategyName)}`,
     `Symbols: ${results.length} | Buys: ${buys} | Sells: ${sells} | Skips: ${skips}`,
     `Orders placed: ${ordersPlaced}`,
@@ -84,5 +102,5 @@ export async function notifySummary(
 }
 
 export async function notifyError(message: string): Promise<void> {
-  await sendMessage(`<b>NATN Bot ERROR</b>\n${esc(message)}`)
+  await sendMessage(`<b>❌ NATN Bot ERROR</b>\n${contextTag()}\n${esc(message)}`)
 }
