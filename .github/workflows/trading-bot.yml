@@ -1,6 +1,11 @@
 # NATN Trading Bot — Scheduled Execution
 # Runs Mon-Fri at 9:45 AM ET (13:45 UTC) — 15 min after market open
 # Also supports manual trigger for testing
+#
+# Environment setup:
+#   Repo-level secrets (shared): BOT_ALPACA_*, BOT_FMP_*, BOT_ALPHAVANTAGE_*, BOT_TELEGRAM_*
+#   Environment secrets (per-env): BOT_SUPABASE_URL, BOT_SUPABASE_SERVICE_ROLE_KEY, BOT_USER_ID
+#   Environments: "development" (DEV Supabase) and "production" (PROD Supabase)
 
 name: Trading Bot
 
@@ -14,11 +19,20 @@ on:
         description: 'Dry run (no real orders)'
         type: boolean
         default: true
+      environment:
+        description: 'Target environment'
+        type: choice
+        options:
+          - development
+          - production
+        default: development
 
 jobs:
   trade:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Scheduled runs always use production; manual runs use selected environment
+    environment: ${{ github.event_name == 'schedule' && 'production' || inputs.environment }}
 
     steps:
       - name: Checkout code
@@ -46,5 +60,5 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.BOT_TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.BOT_TELEGRAM_CHAT_ID }}
           USER_ID: ${{ secrets.BOT_USER_ID }}
-          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
         run: npx tsx src/index.ts
