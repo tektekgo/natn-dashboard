@@ -271,7 +271,10 @@ export default function BotActivityPage() {
             </svg>
             <p className="text-muted-foreground font-medium">No bot executions yet</p>
             <p className="text-sm text-muted-foreground/70 mt-1">
-              Activate a strategy for paper trading to see activity here.
+              Bot executions from activated strategies will appear here.
+            </p>
+            <p className="text-xs text-muted-foreground/50 mt-2">
+              Automated trading is currently managed by the platform owner. Focus on creating and backtesting strategies — your best ideas may be selected for paper trading.
             </p>
           </CardContent>
         </Card>
