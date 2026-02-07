@@ -35,8 +35,8 @@ export default function Header() {
   return (
     <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b border-border px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <h2 className="text-sm bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent font-bold uppercase tracking-wider">
-          NATN Lab
+        <h2 className="text-sm font-bold uppercase tracking-wider">
+          <span className="text-orange-500">N</span><span className="bg-gradient-to-r from-primary to-cyan-500 bg-clip-text text-transparent">ATN Lab</span>
         </h2>
         <Badge className="hidden sm:inline-flex bg-gradient-to-r from-primary/20 to-cyan-500/20 text-primary border-primary/30 hover:from-primary/30 hover:to-cyan-500/30">
           {profile?.subscription_tier === 'pro' ? 'Pro' : 'Beta'}

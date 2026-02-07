@@ -119,7 +119,7 @@ export default function GuidePage() {
         <CardContent className="space-y-4">
           <InfoPanel variant="info" title="What is NATN Lab?">
             <p>
-              NATN Lab is your personal trading strategy laboratory. It lets you create, backtest, and compare
+              NATN Lab (<span className="font-mono text-orange-500">n8n</span> Automated Trading Network) is your personal trading strategy laboratory. It lets you create, backtest, and compare
               trading strategies using real market data — all in a safe, simulated environment with no real money at risk.
             </p>
           </InfoPanel>

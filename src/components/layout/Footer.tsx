@@ -48,7 +48,7 @@ export default function Footer({ variant = 'compact' }: FooterProps) {
                 className="h-14 mb-3"
               />
               <p className="text-sm bg-gradient-to-r from-sidebar-foreground/60 to-sidebar-foreground/40 bg-clip-text text-transparent">
-                Your Trading Strategy Laboratory.
+                Your <span className="font-mono text-orange-500">n8n</span> Automated Trading Network.
                 <br />
                 Learn, test, and trade smarter.
               </p>
